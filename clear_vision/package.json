@@ -1,15 +1,15 @@
 {
-  "name": "renderer",
+  "name": "ui",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "dist-main/index.js",
+  "main": "dist-electron/index.js",
   "scripts": {
-    "dev": "npm-run-all --parallel dev:renderer dev:main",
-    "dev:main": "npm run build:main && electron .",
-    "dev:renderer": "vite renderer",
-    "build:main": "tsc --project main/tsconfig.electron.json",
-    "build:renderer": "tsc -b && vite build renderer",
+    "dev": "npm-run-all --parallel dev:ui dev:electron",
+    "dev:electron": "npm run build:electron && electron .",
+    "dev:ui": "vite ui",
+    "build:electron": "tsc --project electron/tsconfig.json",
+    "build:ui": "tsc -b && vite build ui",
     "lint": "eslint .",
     "preview": "vite preview"
   },
