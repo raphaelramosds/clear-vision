@@ -5,11 +5,11 @@
   "type": "module",
   "main": "dist-electron/index.js",
   "scripts": {
-    "dev": "npm-run-all --parallel dev:ui dev:electron",
+    "dev": "npm-run-all --parallel dev:renderer dev:electron",
     "dev:electron": "npm run build:electron && electron .",
-    "dev:ui": "vite ui",
+    "dev:renderer": "vite renderer",
     "build:electron": "tsc --project electron/tsconfig.json",
-    "build:ui": "tsc -b && vite build ui",
+    "build:renderer": "tsc -b && vite build renderer",
     "lint": "eslint .",
     "preview": "vite preview"
   },
