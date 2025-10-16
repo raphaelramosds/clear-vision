@@ -1,7 +1,17 @@
-/** @type {import('next').NextConfig} */
+import path from "path";
+import type { NextConfig } from "next"
+
 const nextConfig = {
-  output: 'export', // Outputs a Single-Page Application (SPA).
-  distDir: '../dist-ui', // Changes the build output directory to `./dist/`.
+  output: 'export',
+  distDir: '../dist-ui',
+  webpack(config) {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      "@": path.resolve(__dirname, "src")
+    };
+    return config;
+  }
 }
  
 export default nextConfig

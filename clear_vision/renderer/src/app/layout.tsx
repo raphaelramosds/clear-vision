@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'My App',
-  description: 'My App is a...',
+  title: 'Clear Vision',
+  description: 'Desktop solution to remove irrelevant frames from a video',
 }
 
 export default function RootLayout({
