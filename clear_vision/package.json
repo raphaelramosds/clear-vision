@@ -7,23 +7,22 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:renderer dev:electron",
     "dev:electron": "npm run build:electron && electron .",
-    "dev:renderer": "vite renderer",
+    "dev:renderer": "next renderer",
     "build:electron": "tsc --project electron/tsconfig.json",
-    "build:renderer": "tsc -b && vite build renderer",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build:renderer": "tsc -b && next build renderer",
+    "lint": "eslint ."
   },
   "dependencies": {
     "electron": "^38.2.2",
+    "next": "^15.5.5",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
-    "@vitejs/plugin-react": "^5.0.4",
     "cross-env": "^10.1.0",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -31,7 +30,6 @@
     "globals": "^16.4.0",
     "npm-run-all": "^4.1.5",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.45.0",
-    "vite": "^7.1.7"
+    "typescript-eslint": "^8.45.0"
   }
 }

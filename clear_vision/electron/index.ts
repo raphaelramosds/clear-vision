@@ -7,7 +7,7 @@ const createWindow = () => {
         title: 'Clear vision'
     })
 
-    win.loadURL('http://localhost:5173');
+    win.loadURL('http://localhost:3000');
 }
 
 app.whenReady().then(() => {
