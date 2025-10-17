@@ -1,0 +1,14 @@
+{
+    "appId": "com.raphael.clearvision",
+    "files": [
+        "dist-electron",
+        "dist-ui"
+    ],
+    "icon": "./icon.png",
+    "win": {
+        "target": [
+            "portable",
+            "msi"
+        ]
+    }
+}

@@ -11,9 +11,10 @@ export default function FileUploader() {
         type: ''
     });
 
+    // see https://stackoverflow.com/questions/46233585/how-to-upload-files-using-react
     const handleFilePicked = (e) => {
-        let files = e.target.files;
-        let file: File = files[0];
+        const files = e.target.files;
+        const file: File = files[0];
         setUploadedFile({
             name: file.name,
             size: file.size/1000,
