@@ -1,4 +1,10 @@
-export default function Home() {
+import FileUploader from "../../components/FileUploader";
 
-  return <h1>Hello Clear Vision</h1>
+export default function Home() {
+  return (
+    <>
+      <h1>Hello Clear Vision</h1>
+      <FileUploader />
+    </>
+  );
 }

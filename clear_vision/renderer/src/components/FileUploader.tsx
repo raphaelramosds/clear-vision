@@ -1,0 +1,36 @@
+'use client'
+
+import { useState } from "react";
+import { FileMetadata } from "../types";
+
+export default function FileUploader() {
+
+    const [uploadedFile, setUploadedFile] = useState<FileMetadata>({
+        name: '',
+        size: 0,
+        type: ''
+    });
+
+    const handleFilePicked = (e) => {
+        let files = e.target.files;
+        let file: File = files[0];
+        setUploadedFile({
+            name: file.name,
+            size: file.size/1000,
+            type: file.type
+        });
+    }
+
+    return (
+        <>
+            <input type="file" onChange={handleFilePicked} />
+
+            <p>Informações do arquivo:</p>
+            <ul>
+                <li>{uploadedFile.name || 'Sem nome'}</li>
+                <li>{uploadedFile.size} KB</li>
+                <li>{uploadedFile.type || 'Sem tipo definido'}</li>
+            </ul>
+        </>
+    );
+}
