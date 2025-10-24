@@ -44,7 +44,7 @@ export default function VideoUploader() {
 
     return (
         <>
-            <input type="file" onChange={handleFilePicked} />
+            <input type="file" onChange={handleFilePicked} accept="video/*"/>
 
             <p>Informações do arquivo:</p>
             <ul>
