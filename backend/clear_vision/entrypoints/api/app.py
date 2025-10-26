@@ -1,19 +1,28 @@
+from tempfile import NamedTemporaryFile
 from fastapi import FastAPI, UploadFile
+
+from clear_vision.services.send_message import call_send_message
 
 app = FastAPI()
 
-# Request Files
-# https://fastapi.tiangolo.com/tutorial/request-files/
 
-# POST request method (headers application/form-data and application/x-www-form-urlencoded)
-# https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/POST
+@app.post("/upload/")
+async def upload(video: UploadFile):
+    # Move content to a temp file
+    temp = NamedTemporaryFile(
+        delete=False, suffix=".mp4", prefix=video.filename, delete_on_close=True
+    )
+    with video.file as f:
+        temp.write(f.read())
 
-# FastAPI & OpenCV
-# https://medium.com/@samakan061/fastapi-opencv-a-comprehensive-guide-to-real-time-face-detection-c12779295f16
+    # Process frames
+    # ...
 
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
+    # Remove temp file
+    temp.close()
+
     return {
-        "filename": file.filename,
-        "size_mb" : (file.size / 1024) / 1024
+        "filename": video.filename,
+        "size_mb": (video.size / 1024) / 1024,
+        "temp": temp.name,
     }

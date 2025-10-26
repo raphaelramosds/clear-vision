@@ -7,9 +7,9 @@ MODULE_DIR = os.path.dirname(
 )
 sys.path.append(MODULE_DIR)
 
-from clear_vision.services.send_message import call
+from clear_vision.services.send_message import call_send_message
 
-call(
+call_send_message(
     url="https://huggingface.co/spaces/merve/llava-interleave/resolve/main/cats_1.mp4",
     user_prompt="What is the cat doing on this video?",
 )
