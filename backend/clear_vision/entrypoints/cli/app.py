@@ -11,5 +11,5 @@ from clear_vision.services.send_message import call
 
 call(
     url="https://huggingface.co/spaces/merve/llava-interleave/resolve/main/cats_1.mp4",
-    user_prompt="Is there a cat on this videdo?",
+    user_prompt="What is the cat doing on this video?",
 )
