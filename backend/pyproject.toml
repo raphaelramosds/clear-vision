@@ -14,8 +14,10 @@ dependencies = [
     "accelerate (>=1.11.0,<2.0.0)",
     "pillow (>=12.0.0,<13.0.0)",
     "opencv-python (>=4.12.0.88,<5.0.0.0)",
-    "fastapi[standard] (>=0.120.0,<0.121.0)"
-
+    "fastapi (>=0.120.0,<0.121.0)",
+    "uvicorn (>=0.38.0,<0.39.0)",
+    "pydantic (>=2.12.3,<3.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
 ]
 
 
