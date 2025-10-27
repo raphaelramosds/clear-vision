@@ -1,3 +1,5 @@
+from os import path as os_path
+
 from tempfile import NamedTemporaryFile
 from fastapi import FastAPI, UploadFile
 
@@ -8,10 +10,9 @@ app = FastAPI()
 
 @app.post("/upload/")
 async def upload(video: UploadFile):
+    dot_ext = os_path.splitext(video.filename)[1]
     # Move content to a temp file
-    temp = NamedTemporaryFile(
-        delete=False, suffix=".mp4", prefix=video.filename, delete_on_close=True
-    )
+    temp = NamedTemporaryFile(delete=False, suffix=dot_ext, delete_on_close=True)
     with video.file as f:
         temp.write(f.read())
 
