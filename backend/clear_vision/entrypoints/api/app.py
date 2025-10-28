@@ -3,7 +3,7 @@ from os import path as os_path
 from tempfile import NamedTemporaryFile
 from fastapi import FastAPI, UploadFile
 
-from clear_vision.services.send_message import call_send_message
+from clear_vision.use_cases.send_message import call_send_message
 
 app = FastAPI()
 

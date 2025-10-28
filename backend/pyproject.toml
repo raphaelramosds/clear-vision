@@ -2,10 +2,8 @@
 name = "clear-vision-backend"
 version = "0.1.0"
 description = "Clear vision backend"
-authors = [
-    {name = "Raphael Ramos",email = "raphael.opensource@gmail.com"}
-]
-license = {text = "MIT"}
+authors = [{ name = "Raphael Ramos", email = "raphael.opensource@gmail.com" }]
+license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.12,<3.15"
 dependencies = [
@@ -27,3 +25,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 package-mode = false
+packages = [{ include = "clear_vision" }]
