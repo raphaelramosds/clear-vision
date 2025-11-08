@@ -10,7 +10,9 @@ from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 from clear_vision.interfaces.models import VideoQAModelInterface
 from clear_vision.use_cases.send_message import SendMessageUseCase
 
-videos_router = APIRouter()
+videos_router = APIRouter(
+    prefix="/clear-vision/v1"
+)
 
 
 @videos_router.post("/upload/")
