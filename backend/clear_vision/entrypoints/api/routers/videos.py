@@ -1,5 +1,6 @@
 from os import path as os_path
-from fastapi import APIRouter, Depends, UploadFile
+from typing import Annotated
+from fastapi import APIRouter, Depends, Form, UploadFile
 from tempfile import NamedTemporaryFile
 from dependency_injector.wiring import inject, Provide
 
@@ -19,6 +20,7 @@ videos_router = APIRouter(
 @inject
 def upload(
     video: UploadFile,
+    user_prompt: Annotated[str, Form()],
     frame_sampler: FrameSamplerInterface = Depends(Provide["frame_sampler"]),
     model: VideoQAModelInterface = Depends(Provide["model"]),
 ):
@@ -35,7 +37,7 @@ def upload(
         path_to_video=ResolveInMemoryStrategy().execute(
             video=VideoPath(path=temp.name)
         ),
-        user_prompt="In which minute does a cat appear on this video?",
+        user_prompt=user_prompt,
     )
 
     result = send_message_use_case(
