@@ -1,5 +1,5 @@
 [project]
-name = "clear-vision-backend"
+name = "clear-vision"
 version = "0.1.0"
 description = "Clear vision backend"
 authors = [{ name = "Raphael Ramos", email = "raphael.opensource@gmail.com" }]
@@ -16,6 +16,7 @@ dependencies = [
     "uvicorn (>=0.38.0,<0.39.0)",
     "pydantic (>=2.12.3,<3.0.0)",
     "python-multipart (>=0.0.20,<0.0.21)",
+    "dependency-injector (>=4.48.2,<5.0.0)",
 ]
 
 

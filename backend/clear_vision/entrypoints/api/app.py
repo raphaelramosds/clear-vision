@@ -1,29 +1,17 @@
-from os import path as os_path
+from fastapi import FastAPI
 
-from tempfile import NamedTemporaryFile
-from fastapi import FastAPI, UploadFile
-
-from clear_vision.use_cases.send_message import call_send_message
-
-app = FastAPI()
+from clear_vision.config.containers import Container
+from clear_vision.entrypoints.api.routers.videos import videos_router
 
 
-@app.post("/upload/")
-async def upload(video: UploadFile):
-    dot_ext = os_path.splitext(video.filename)[1]
-    # Move content to a temp file
-    temp = NamedTemporaryFile(delete=False, suffix=dot_ext, delete_on_close=True)
-    with video.file as f:
-        temp.write(f.read())
+def create_app() -> FastAPI:
+    container = Container()
 
-    # Process frames
-    # ...
+    app = FastAPI()
+    app.container = container
+    app.include_router(videos_router)
 
-    # Remove temp file
-    temp.close()
+    return app
 
-    return {
-        "filename": video.filename,
-        "size_mb": (video.size / 1024) / 1024,
-        "temp": temp.name,
-    }
+
+app = create_app()
