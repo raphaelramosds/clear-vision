@@ -16,6 +16,7 @@ export default function RootLayout({
                 />
             </head>
             <body style={{
+                margin: 0,  
                 fontFamily: 'Roboto',
                 fontWeight: 400
             }}>
