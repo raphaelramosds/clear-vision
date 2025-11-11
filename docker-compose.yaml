@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  api:
+    image: raphael/clear-vision-api:local
+    build:
+      context: ./backend
+    ports:
+      - "4000:4000"
+    volumes:
+      - "./backend/poetry.lock:/app/poetry.lock"
+      - "./backend/pyproject.toml:/app/pyproject.toml"
+      - "./backend/clear_vision:/app/clear_vision"
+    # env_file: .env
+    entrypoint:
+      - /bin/sh
+      - -c
+      # DEVELOPMENT only: monitor changes on .py files to reload server
+      - |
+        poetry run uvicorn clear_vision.entrypoints.api.main:app --host 0.0.0.0 --port 4000 --reload
+
+  frontend:
+    image: raphael/clear-vision-frontend
+    build:
+      dockerfile: Dev.dockerfile
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/package-lock.json:/app/package-lock.json
+      - ./frontend/web:/app/web
