@@ -196,7 +196,7 @@ export default function VideoUploader() {
                   }
                 }}
               >
-                Gerar amostras de frames
+                Buscar evento
               </Button>
 
               {frames.length > 0 && (
