@@ -44,5 +44,5 @@ def upload(
     temp.close()
 
     return {
-        "result": f"{result} frames",
+        "num_frames": result,
     }
