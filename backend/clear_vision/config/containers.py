@@ -1,7 +1,6 @@
 from dependency_injector import containers, providers
 
 from clear_vision.adapters.frame_samplers import Cv2VideoCaptureFrameSampler
-from clear_vision.adapters.models import LlavaVideoQAModel
 
 
 class Container(containers.DeclarativeContainer):
@@ -19,5 +18,3 @@ class Container(containers.DeclarativeContainer):
     )
 
     frame_sampler = providers.Factory(Cv2VideoCaptureFrameSampler)
-
-    model = providers.Factory(LlavaVideoQAModel)

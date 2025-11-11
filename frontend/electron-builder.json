@@ -2,7 +2,7 @@
     "appId": "com.raphael.clearvision",
     "files": [
         "dist-electron",
-        "dist-ui"
+        "dist-web"
     ],
     "icon": "./icon.png",
     "win": {

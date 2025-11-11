@@ -1,17 +1,17 @@
 {
-  "name": "ui",
+  "name": "clear-vision",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "main": "dist-electron/index.js",
   "scripts": {
-    "dev": "npm-run-all --parallel dev:renderer dev:electron",
+    "dev": "npm-run-all --parallel dev:web dev:electron",
     "dev:electron": "npm run build:electron && electron .",
-    "dev:renderer": "next renderer",
+    "dev:web": "next web",
     "build:electron": "tsc --project electron/tsconfig.json",
-    "build:renderer": "tsc -b && next build renderer",
+    "build:web": "tsc -b && next build web",
     "lint": "eslint .",
-    "dist:win": "npm run build:electron && npm run build:renderer && electron-builder --win --x64"
+    "dist:win": "npm run build:electron && npm run build:web && electron-builder --win --x64"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

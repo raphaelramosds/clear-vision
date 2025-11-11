@@ -8,12 +8,9 @@ from clear_vision.adapters.strategies import ResolveInMemoryStrategy
 from clear_vision.domain.command import SendMessageCommand
 from clear_vision.domain.value_objects import VideoPath
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
-from clear_vision.interfaces.models import VideoQAModelInterface
 from clear_vision.use_cases.send_message import SendMessageUseCase
 
-videos_router = APIRouter(
-    prefix="/clear-vision/v1"
-)
+videos_router = APIRouter(prefix="/clear-vision/v1")
 
 
 @videos_router.post("/upload/")
@@ -22,7 +19,6 @@ def upload(
     video: UploadFile,
     user_prompt: Annotated[str, Form()],
     frame_sampler: FrameSamplerInterface = Depends(Provide["frame_sampler"]),
-    model: VideoQAModelInterface = Depends(Provide["model"]),
 ):
     dot_ext = os_path.splitext(video.filename)[1]
     content = video.file.read()
@@ -42,12 +38,11 @@ def upload(
 
     result = send_message_use_case(
         command=command,
-        model=model,
         frame_sampler=frame_sampler,
     )
 
     temp.close()
 
     return {
-        "result": result,
+        "result": f"{result} frames",
     }
