@@ -39,8 +39,8 @@ services:
     ports:
       - 11434:11434
     volumes:
+      # Map volume to downloaded model via ollama pull
       - ollama:/root/.ollama
-      - ./ollama-server/models:/models
 
 volumes:
   ollama:

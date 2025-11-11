@@ -66,24 +66,32 @@ export default function VideoUploader() {
       setFrames(data.num_frames || 0);
       setUploading(false);
 
-      // Abre WebSocket para receber resposta do modelo
       setProcessing(true);
       const ws = new WebSocket("ws://localhost:4000/clear-vision/v1/ws");
 
       wsRef.current = ws;
 
       ws.onopen = () => {
+        console.info("Connecting to Websocket endpoint...");
         ws.send(JSON.stringify({ event: "PROCESS", prompt: userPrompt }));
+        console.info("Message sent to Websocket endpoint.");
+        console.info("Waiting for the pair response...")
       };
 
       ws.onmessage = (msg) => {
+        console.info("Pair has sent a message...")
         const payload = JSON.parse(msg.data);
-        if (payload.event === "CHUNK") {
-          setResponseLog((prev) => [...prev, payload.data]);
-        } else if (payload.event === "DONE") {
-          ws.close();
-          setProcessing(false);
-        }
+        console.info("Pair payload:");
+        console.info(JSON.parse(payload.message));
+        // console.info(JSON.parse(payload));
+        // if (payload.event === "CHUNK") {
+        //   setResponseLog((prev) => [...prev, payload.data]);
+        // } else if (payload.event === "DONE") {
+        //   ws.close();
+        //   setProcessing(false);
+        // } 
+        ws.close();
+        setProcessing(false);
       };
 
       ws.onerror = () => {
