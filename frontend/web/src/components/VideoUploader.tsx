@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Box,
   Typography,
@@ -9,7 +9,7 @@ import {
   Stack,
   LinearProgress,
   Alert,
-  TextField
+  TextField,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { FileMetadata } from "../types";
@@ -17,9 +17,12 @@ import { FileMetadata } from "../types";
 export default function VideoUploader() {
   const [uploadedFile, setUploadedFile] = useState<FileMetadata | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [frames, setFrames] = useState<number | null>(null);
   const [userPrompt, setUserPrompt] = useState("");
+  const [responseLog, setResponseLog] = useState<string[]>([]);
+  const wsRef = useRef<WebSocket | null>(null);
 
   const handleFilePicked = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,6 +45,7 @@ export default function VideoUploader() {
     setUploading(true);
     setError(null);
     setFrames(null);
+    setResponseLog([]);
 
     try {
       const formData = new FormData();
@@ -60,9 +64,38 @@ export default function VideoUploader() {
 
       const data = await res.json();
       setFrames(data.num_frames || 0);
+      setUploading(false);
+
+      // Abre WebSocket para receber resposta do modelo
+      setProcessing(true);
+      const ws = new WebSocket("ws://localhost:4000/clear-vision/v1/ws");
+
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ event: "PROCESS", prompt: userPrompt }));
+      };
+
+      ws.onmessage = (msg) => {
+        const payload = JSON.parse(msg.data);
+        if (payload.event === "CHUNK") {
+          setResponseLog((prev) => [...prev, payload.data]);
+        } else if (payload.event === "DONE") {
+          ws.close();
+          setProcessing(false);
+        }
+      };
+
+      ws.onerror = () => {
+        setError("Erro na conexão WebSocket.");
+        setProcessing(false);
+      };
+
+      ws.onclose = () => {
+        setProcessing(false);
+      };
     } catch (err: any) {
       setError(err.message || "Erro ao enviar vídeo.");
-    } finally {
       setUploading(false);
     }
   };
@@ -102,13 +135,13 @@ export default function VideoUploader() {
           <Button
             variant="outlined"
             onClick={handleUpload}
-            disabled={!uploadedFile || uploading}
+            disabled={!uploadedFile || uploading || processing}
             sx={{ width: "100%" }}
           >
-            {uploading ? "Enviando..." : "Fazer upload"}
+            {uploading ? "Enviando..." : processing ? "Processando..." : "Fazer upload"}
           </Button>
 
-          {uploading && <LinearProgress sx={{ width: "100%" }} />}
+          {(uploading || processing) && <LinearProgress sx={{ width: "100%" }} />}
 
           {error && <Alert severity="error" sx={{ width: "100%" }}>{error}</Alert>}
 
@@ -116,6 +149,14 @@ export default function VideoUploader() {
             <Alert severity="success" sx={{ width: "100%" }}>
               ✅ O vídeo possui <strong>{frames}</strong> frames.
             </Alert>
+          )}
+
+          {responseLog.length > 0 && (
+            <Paper variant="outlined" sx={{ p: 2, mt: 2, maxHeight: 200, overflow: "auto", textAlign: "left" }}>
+              {responseLog.map((chunk, i) => (
+                <Typography key={i} variant="body2">{chunk}</Typography>
+              ))}
+            </Paper>
           )}
 
           {uploadedFile?.result && (

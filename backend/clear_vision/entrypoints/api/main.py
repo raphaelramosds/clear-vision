@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from clear_vision.config.containers import Container
 from clear_vision.entrypoints.api.routers.videos import videos_router
+from clear_vision.entrypoints.api.routers.healthcheck import healthcheck_router
 
 
 def create_app() -> FastAPI:
@@ -12,19 +13,23 @@ def create_app() -> FastAPI:
     app = FastAPI()
     app.container = container
     app.openapi = openapi_settings
+    app.include_router(healthcheck_router)
     app.include_router(videos_router)
 
-    # 🟢 Configuração de CORS
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[
-            "http://localhost:3000",  # frontend Next.js
-            "http://127.0.0.1:3000",  # caso use localhost alternativo
+            "*"
+            # "http://localhost:3000",  # frontend Next.js
+            # "http://127.0.0.1:3000",  # caso use localhost alternativo
         ],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    print(app.routes)
+
 
     return app
 
