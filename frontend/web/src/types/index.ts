@@ -2,5 +2,5 @@ export type FileMetadata = {
     name: string
     size: number
     type: string
-    result: string | ArrayBuffer
+    result: string | Blob
 }
