@@ -1,8 +1,15 @@
-# backend
+# Backend
 
-## Question answering
+## Question answering with Llava
 
-Use the transformer [Video text to text](https://huggingface.co/docs/transformers/tasks/video_text_to_text) to process frames of video(s) and answer questions about them
+- [Image text to text](https://huggingface.co/docs/transformers/tasks/image_text_to_text)
+- [Video text to text](https://huggingface.co/docs/transformers/tasks/video_text_to_text) to process frames of video(s) and answer questions about them
+- [LLaVA Interleave Model Card](https://huggingface.co/llava-hf/llava-interleave-qwen-0.5b-hf)
+
+## Question answering with Ollama
+
+- [Vision](https://docs.ollama.com/capabilities/vision#python)
+- [Cloud Models](https://docs.ollama.com/cloud)
 
 ## Request Files
 https://fastapi.tiangolo.com/tutorial/request-files/

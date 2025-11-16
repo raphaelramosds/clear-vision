@@ -20,6 +20,7 @@ COPY clear_vision ./clear_vision/
 
 RUN python3 -m venv ${VENV_DIR}
 RUN ${VENV_DIR}/bin/pip install --no-cache-dir -U pip setuptools poetry urllib3
+RUN ${VENV_DIR}/bin/pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 RUN ${VENV_DIR}/bin/poetry install --no-root && \
     rm -rf /root/.cache/pip /root/.cache/pypoetry && \
     find . -type d -name "__pycache__" -exec rm -rf {} +

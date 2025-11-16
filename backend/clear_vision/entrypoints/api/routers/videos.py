@@ -7,9 +7,7 @@ from tempfile import NamedTemporaryFile
 from dependency_injector.wiring import inject, Provide
 from langchain_ollama import OllamaLLM
 
-from clear_vision.adapters.strategies import ResolveInMemoryStrategy
 from clear_vision.domain.command import SendMessageCommand
-from clear_vision.domain.value_objects import VideoPath
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 from clear_vision.use_cases.send_message import SendMessageUseCase
 
@@ -52,9 +50,7 @@ async def process_video(job_id: str, path: str, user_prompt: str, frame_sampler)
     try:
         send_message_use_case = SendMessageUseCase()
         command = SendMessageCommand(
-            path_to_video=ResolveInMemoryStrategy().execute(
-                video=VideoPath(path=path)
-            ),
+            path_to_video=path,
             user_prompt=user_prompt,
         )
         num_frames = send_message_use_case(
@@ -95,17 +91,21 @@ async def ws_job_status(websocket: WebSocket, job_id: str):
                 break
 
             if task_info["status"] == "done":
-                await websocket.send_json({
-                    "status": "done",
-                    "num_frames": task_info.get("num_frames"),
-                    "result": task_info.get("result"),
-                })
+                await websocket.send_json(
+                    {
+                        "status": "done",
+                        "num_frames": task_info.get("num_frames"),
+                        "result": task_info.get("result"),
+                    }
+                )
                 break
             elif task_info["status"] == "error":
-                await websocket.send_json({
-                    "status": "error",
-                    "message": task_info.get("error"),
-                })
+                await websocket.send_json(
+                    {
+                        "status": "error",
+                        "message": task_info.get("error"),
+                    }
+                )
                 break
             else:
                 await websocket.send_json({"status": "processing"})
