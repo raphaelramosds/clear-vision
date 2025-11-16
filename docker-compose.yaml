@@ -30,17 +30,17 @@ services:
       - ./frontend/package-lock.json:/app/package-lock.json
       - ./frontend/web:/app/web
 
-  ollama-server:
-    image: raphael/clear-vision-ollama-server:local
-    build:
-      context: ./ollama-server
-      args:
-        OLLAMA_MODEL: qwen3-vl:2b
-    ports:
-      - 11434:11434
-    volumes:
-      # Map volume to downloaded model via ollama pull
-      - ollama:/root/.ollama
+  # ollama-server:
+  #   image: raphael/clear-vision-ollama-server:local
+  #   build:
+  #     context: ./ollama-server
+  #     args:
+  #       OLLAMA_MODEL: qwen3-vl:2b
+  #   ports:
+  #     - 11434:11434
+  #   volumes:
+  #     # Map volume to downloaded model via ollama pull
+  #     - ollama:/root/.ollama
 
-volumes:
-  ollama:
+# volumes:
+#   ollama:
