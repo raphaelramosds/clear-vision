@@ -5,11 +5,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Form, UploadFile, WebSocket, WebSocketDisconnect
 from tempfile import NamedTemporaryFile
 from dependency_injector.wiring import inject, Provide
-from langchain_ollama import OllamaLLM
-
-from clear_vision.domain.command import SendMessageCommand
-from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
-from clear_vision.use_cases.send_message import SendMessageUseCase
 
 videos_router = APIRouter(prefix="/clear-vision/v1")
 
@@ -21,7 +16,6 @@ processing_tasks = {}
 async def upload(
     video: UploadFile,
     user_prompt: Annotated[str, Form()],
-    frame_sampler: FrameSamplerInterface = Depends(Provide["frame_sampler"]),
 ):
     dot_ext = os_path.splitext(video.filename)[1]
     content = await video.read()
@@ -38,7 +32,6 @@ async def upload(
             job_id=job_id,
             path=temp.name,
             user_prompt=user_prompt,
-            frame_sampler=frame_sampler,
         )
     )
     processing_tasks[job_id] = {"status": "processing", "task": task}
@@ -46,31 +39,12 @@ async def upload(
     return {"job_id": job_id, "message": "Upload recebido. Processando em background."}
 
 
-async def process_video(job_id: str, path: str, user_prompt: str, frame_sampler):
+async def process_video(job_id: str, path: str, user_prompt: str):
     try:
-        send_message_use_case = SendMessageUseCase()
-        command = SendMessageCommand(
-            path_to_video=path,
-            user_prompt=user_prompt,
-        )
-        num_frames = send_message_use_case(
-            command=command,
-            frame_sampler=frame_sampler,
-        )
-
-        context = f"""
-        O vídeo '{os_path.basename(path)}' contém {num_frames} frames.
-        Pergunta do usuário: {user_prompt}.
-        Gere uma resposta detalhada e natural com base nas informações do vídeo.
-        """
-
-        llm = OllamaLLM(model="qwen3:1.7b", base_url="http://ollama-server:11434")
-        response = llm.invoke(context)
-
+        response = None # TODO
         processing_tasks[job_id] = {
             "status": "done",
             "result": response,
-            "num_frames": num_frames,
         }
 
     except Exception as e:
@@ -94,8 +68,7 @@ async def ws_job_status(websocket: WebSocket, job_id: str):
                 await websocket.send_json(
                     {
                         "status": "done",
-                        "num_frames": task_info.get("num_frames"),
-                        "result": task_info.get("result"),
+                        # "result" : "something"
                     }
                 )
                 break
