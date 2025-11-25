@@ -1,0 +1,27 @@
+import typing as t
+import numpy as np
+from pydantic import BaseModel, ConfigDict
+
+
+class ValueObject(BaseModel):
+    """
+    Base class for value objects in Domain Driven Design.
+    Value objects are immutable and defined by their attributes' values.
+    """
+
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+
+    def __repr__(self):
+        return f"{type(self).__name__}({self.model_dump()!r})"
+
+
+class ImageTargetDetection(ValueObject):
+    ts: float
+    exists: bool
+    target: str
+    description: t.Optional[str] = None
+
+
+class VideoFrame(ValueObject):
+    frame: np.ndarray
+    ts: float

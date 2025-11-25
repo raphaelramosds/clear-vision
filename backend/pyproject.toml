@@ -29,10 +29,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 package-mode = false
-packages = [{ include = "clear_vision" }]
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^7.1.0"
 python-dotenv = "^1.2.1"
 matplotlib = "^3.10.7"
+pytest = "^9.0.1"
 

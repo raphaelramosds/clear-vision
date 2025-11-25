@@ -1,6 +1,7 @@
 import cv2
 
-from clear_vision.infra.interfaces.frame_samplers import FrameSamplerInterface
+from clear_vision.domain.value_objects import VideoFrame
+from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 
 
 class Cv2FullVideoFrameSampler(FrameSamplerInterface):
@@ -13,10 +14,12 @@ class Cv2FullVideoFrameSampler(FrameSamplerInterface):
 
         fps = cap.get(cv2.CAP_PROP_FPS)
         if fps == 0:
-            raise ValueError("FPS could not be read. Video file is invalid or corrupted.")
+            raise ValueError(
+                "FPS could not be read. Video file is invalid or corrupted."
+            )
 
         interval = int(fps)
-        frames, timestamps = [], []
+        samples = []
         i = 0
 
         while True:
@@ -25,15 +28,14 @@ class Cv2FullVideoFrameSampler(FrameSamplerInterface):
                 break
             if i % interval == 0:
                 rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frames.append(rgb)
-                timestamps.append(i / fps)
+                samples.append(VideoFrame(frame=rgb, ts=(i / fps)))
             i += 1
 
         cap.release()
 
-        if len(frames) == 0:
+        if len(samples) == 0:
             raise ValueError(
                 "No frames extracted from video. Check the file path or permissions."
             )
 
-        return frames, timestamps
+        return samples
