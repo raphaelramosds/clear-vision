@@ -18,7 +18,6 @@ class ValueObject(BaseModel):
 class ImageTargetDetection(ValueObject):
     ts: float
     exists: bool
-    target: str
     description: t.Optional[str] = None
 
 
