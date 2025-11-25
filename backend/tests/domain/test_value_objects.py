@@ -46,11 +46,10 @@ def test_value_object_repr():
 
 
 def test_image_target_detection_creation():
-    image_target_detection = ImageTargetDetection(ts=1.0, exists=True, target="car")
+    image_target_detection = ImageTargetDetection(ts=1.0, exists=True)
 
     assert image_target_detection.ts == 1.0
     assert image_target_detection.exists is True
-    assert image_target_detection.target == "car"
     assert image_target_detection.description is None
 
 
@@ -58,7 +57,6 @@ def test_image_target_detection_optional_description():
     image_target_detection = ImageTargetDetection(
         ts=0.5,
         exists=False,
-        target="door",
         description="closed",
     )
 
