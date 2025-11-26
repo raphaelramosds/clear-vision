@@ -1,8 +1,7 @@
 from unittest.mock import MagicMock, patch
-import cv2
+
 import numpy as np
 import pytest
-from pathlib import Path
 
 
 @pytest.fixture
@@ -29,4 +28,3 @@ def mock_video_capture():
 
         mock_cap.configure = configure
         yield mock_cap
-
