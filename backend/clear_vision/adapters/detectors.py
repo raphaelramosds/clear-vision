@@ -16,10 +16,10 @@ class LlavaTargetDetector(GeneralTargetDetectorInterface):
             """
 Analyze the image and search for this target object: "{target}".
 Then, return ONLY JSON in the following format:
-{{"exists": boolean, "description": string}}
+{{"target_exists": boolean, "description": string}}
 Where:
 - "description": must describe ALL visible objects in the image.
-- "exists": must be true if the target object is present. Otherwise, it must be false.
+- "target_exists": must be true if the target object is present. Otherwise, it must be false.
 """.format(
                 target=target
             )
@@ -43,6 +43,6 @@ Where:
     def parse_model_response(self, model_response) -> dict:
         match = re.search(r"(?<=assistant\n)\{[\s\S]*\}", model_response)
         if not match:
-            return {"exists": False, "description": None}
+            return {"target_exists": False, "description": None}
 
         return json.loads(match.group(0))

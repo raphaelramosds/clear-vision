@@ -33,7 +33,7 @@ class Video(Entity):
 
 
 # TODO transform this into an aggregate
-class InferenceResult(Entity):
+class Inference(Entity):
     
     # TODO save video UIDs on a repository (future)
     # video_uid: str

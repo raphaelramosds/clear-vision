@@ -1,30 +1,35 @@
-from clear_vision.adapters.detectors import LlavaTargetDetector
-from clear_vision.domain.entities import InferenceResult
+from clear_vision.domain.entities import Inference
+from clear_vision.interfaces.detectors import GeneralTargetDetectorInterface
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
-from clear_vision.interfaces.models import ChatbotModelInterface
 
 
-class VideoService:
+class InferenceService:
 
     def __init__(
-        self, model: ChatbotModelInterface, frame_sampler: FrameSamplerInterface
+        self,
+        detector: GeneralTargetDetectorInterface,
+        frame_sampler: FrameSamplerInterface,
     ) -> None:
-        self.model = model
+        self.detector = detector
         self.frame_sampler = frame_sampler
-
-    def add_video(self): ...
 
     # TODO persist inferences result on a repository
     def view_video_inference_result(self, video_uid: str): ...
+
+    def list_inference_results(self): ...
 
     def detect_target_on_video(
         self,
         video_path: str,
         target: str,
-    ) -> InferenceResult:
+    ) -> Inference:
         samples = self.frame_sampler.sample(video_path=video_path)
-        detector = LlavaTargetDetector()
-        detections = detector.detect_on_frames(video_frames=samples, target=target)
-        inference_result = InferenceResult(target=target, detections=detections)
+        detections = self.detector.detect_on_frames(video_frames=samples, target=target)
+        inference_result = Inference(
+            target=target,
+            detections=[
+                detection for detection in detections if detection.target_exists == True
+            ],
+        )
 
         return inference_result
