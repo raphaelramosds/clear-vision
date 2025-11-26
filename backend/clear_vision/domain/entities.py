@@ -3,7 +3,7 @@ import uuid
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from clear_vision.domain.value_objects import ImageTargetDetection, VideoFrame
+from clear_vision.domain.value_objects import TargetDetection, VideoFrame
 
 
 class Entity(BaseModel):
@@ -32,8 +32,11 @@ class Video(Entity):
     frames: t.List[VideoFrame]
 
 
-# TODO TRANSFORM THIS INTO AN AGGREGATE
+# TODO transform this into an aggregate
 class InferenceResult(Entity):
-    video_uid: str
+    
+    # TODO save video UIDs on a repository (future)
+    # video_uid: str
+
     target: str
-    detections: t.List[ImageTargetDetection]
+    detections: t.List[TargetDetection]

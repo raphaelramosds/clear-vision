@@ -1,5 +1,5 @@
 import pytest
-from clear_vision.domain.value_objects import ImageTargetDetection
+from clear_vision.domain.value_objects import TargetDetection
 from tests.fakes import FakeValueObject
 
 
@@ -46,7 +46,7 @@ def test_value_object_repr():
 
 
 def test_image_target_detection_creation():
-    image_target_detection = ImageTargetDetection(ts=1.0, exists=True)
+    image_target_detection = TargetDetection(ts=1.0, exists=True)
 
     assert image_target_detection.ts == 1.0
     assert image_target_detection.exists is True
@@ -54,7 +54,7 @@ def test_image_target_detection_creation():
 
 
 def test_image_target_detection_optional_description():
-    image_target_detection = ImageTargetDetection(
+    image_target_detection = TargetDetection(
         ts=0.5,
         exists=False,
         description="closed",

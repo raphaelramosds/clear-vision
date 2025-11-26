@@ -15,7 +15,7 @@ class ValueObject(BaseModel):
         return f"{type(self).__name__}({self.model_dump()!r})"
 
 
-class ImageTargetDetection(ValueObject):
+class TargetDetection(ValueObject):
     ts: float
     exists: bool
     description: t.Optional[str] = None

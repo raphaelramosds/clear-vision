@@ -3,6 +3,8 @@ import typing as t
 from abc import ABC, abstractmethod
 from transformers.utils import logging
 
+from clear_vision.domain.value_objects import TargetDetection, VideoFrame
+
 
 class ChatbotModelInterface(ABC):
 
@@ -12,6 +14,11 @@ class ChatbotModelInterface(ABC):
 
     @abstractmethod
     def _load_model(self, model_id: str) -> t.Any: ...
+
+    @abstractmethod
+    def generate_target_detection(
+        self, target: str, sample: VideoFrame
+    ) -> TargetDetection: ...
 
 
 class HFChatbotModelInterface(ChatbotModelInterface):
