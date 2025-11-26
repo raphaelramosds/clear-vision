@@ -28,7 +28,7 @@ class Cv2FullVideoFrameSampler(FrameSamplerInterface):
                 break
             if i % interval == 0:
                 rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                samples.append(VideoFrame(frame=rgb, ts=(i / fps)))
+                samples.append(VideoFrame(data=rgb, ts=(i / fps)))
             i += 1
 
         cap.release()
