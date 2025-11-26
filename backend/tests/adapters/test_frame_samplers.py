@@ -54,4 +54,4 @@ def test_frame_conversion_to_rgb(mock_video_capture):
 
     assert isinstance(samples[0], VideoFrame)
 
-    assert samples[0].frame[0][0].tolist() == [0, 0, 255] # blue RGB
+    assert samples[0].data[0][0].tolist() == [0, 0, 255] # blue RGB

@@ -17,10 +17,10 @@ class ValueObject(BaseModel):
 
 class TargetDetection(ValueObject):
     ts: float
-    exists: bool
+    target_exists: bool
     description: t.Optional[str] = None
 
 
 class VideoFrame(ValueObject):
-    frame: np.ndarray
+    data: np.ndarray
     ts: float

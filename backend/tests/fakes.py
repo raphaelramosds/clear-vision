@@ -14,7 +14,7 @@ class FakeChatbotModel(ChatbotModelInterface):
     def _load_model(self, model_id):
         return f"fake-chatbot-{model_id}"
 
-    def generate_target_detection(
+    def single_frame(
         self, target: str, sample: VideoFrame
     ) -> TargetDetection:
         return TargetDetection(

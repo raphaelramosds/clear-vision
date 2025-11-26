@@ -25,18 +25,18 @@ def test_llava_interleave_qwen_model_initialization(mock_model, mock_processor):
     mock_model.return_value = MagicMock()
     mock_processor.return_value = MagicMock()
 
-    instance = LlavaInterleaveQwenModel(model_id="qwen-llava")
+    instance = LlavaInterleaveQwenModel()
 
-    assert instance.model_id == "qwen-llava"
+    assert instance.model_id == "llava-hf/llava-interleave-qwen-0.5b-hf"
     assert instance.model is mock_model.return_value
     assert instance.processor is mock_processor.return_value
 
     mock_model.assert_called_once()
     called_args, called_kwargs = mock_model.call_args
 
-    assert called_args[0] == "qwen-llava"
+    assert called_args[0] == "llava-hf/llava-interleave-qwen-0.5b-hf"
     assert called_kwargs["device_map"] == "auto"
     assert "quantization_config" in called_kwargs
     assert "dtype" in called_kwargs
 
-    mock_processor.assert_called_once_with("qwen-llava")
+    mock_processor.assert_called_once_with("llava-hf/llava-interleave-qwen-0.5b-hf")
