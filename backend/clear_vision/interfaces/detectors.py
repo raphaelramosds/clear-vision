@@ -23,7 +23,7 @@ class GeneralTargetDetectorInterface(ABC):
             description=parsed["description"],
         )
 
-    def detect_on_frames(self, video_frames: t.List[VideoFrame], target: str):
+    def detect_many(self, video_frames: t.List[VideoFrame], target: str):
         return [
             self.detect(video_frame=video_frame, target=target)
             for video_frame in video_frames

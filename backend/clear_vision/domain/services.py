@@ -14,17 +14,17 @@ class InferenceService:
         self.frame_sampler = frame_sampler
 
     # TODO persist inferences result on a repository
-    def view_video_inference_result(self, video_uid: str): ...
+    def get_inference_result(self, video_uid: str): ...
 
     def list_inference_results(self): ...
 
-    def detect_target_on_video(
+    def run_video_target_detection(
         self,
         video_path: str,
         target: str,
     ) -> Inference:
         samples = self.frame_sampler.sample(video_path=video_path)
-        detections = self.detector.detect_on_frames(video_frames=samples, target=target)
+        detections = self.detector.detect_many(video_frames=samples, target=target)
         inference_result = Inference(
             target=target,
             detections=[
