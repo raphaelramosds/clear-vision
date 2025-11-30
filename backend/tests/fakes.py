@@ -1,6 +1,6 @@
 import numpy as np
 
-from clear_vision.domain.value_objects import ValueObject, VideoFrame
+from clear_vision.domain.value_objects import TargetDetection, ValueObject, VideoFrame
 from clear_vision.interfaces.detectors import GeneralTargetDetectorInterface
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 from clear_vision.interfaces.models import (
@@ -29,10 +29,20 @@ class FakeHFChatbotModel(HFChatbotModelInterface):
 class FakeDetector(GeneralTargetDetectorInterface):
 
     def process_frame(self, frame, target):
-        return f"detected {target}"
+        return ""
 
     def parse_model_response(self, model_response):
-        return {"target_exists": True, "description": "Fake target found"}
+        return {}
+
+    def run_video_target_detection(self, video_path, target, frame_sampler):
+        return [
+            TargetDetection(
+                description="Fake target found", target_exists=True, ts=1.0
+            ),
+            TargetDetection(
+                description="Fake target found", target_exists=True, ts=4.0
+            ),
+        ]
 
 
 class FakeFrameSampler(FrameSamplerInterface):

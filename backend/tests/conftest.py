@@ -4,15 +4,7 @@ import pytest
 
 from unittest.mock import MagicMock, patch
 from httpx import ASGITransport, AsyncClient
-from clear_vision.adapters.repositories import (
-    InferenceInMemoryRepository,
-    VideoInMemoryRepository,
-)
-from clear_vision.domain.entities import Inference, Video
-from clear_vision.domain.services import InferenceService, VideoService
-from clear_vision.domain.value_objects import VideoFrame
 from clear_vision.entrypoints.api.main import app
-from tests.fakes import FakeDetector, FakeFrameSampler
 
 
 @pytest.fixture

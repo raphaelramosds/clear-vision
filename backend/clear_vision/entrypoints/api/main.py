@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from clear_vision.config.containers import Container
 from clear_vision.entrypoints.api.routers.videos import videos_router
+from clear_vision.entrypoints.api.routers.inferences import inference_router
 from clear_vision.entrypoints.api.routers.healthcheck import healthcheck_router
 
 
@@ -15,7 +16,7 @@ def create_app() -> FastAPI:
     app.openapi = openapi_settings
     app.include_router(healthcheck_router)
     app.include_router(videos_router)
-
+    app.include_router(inference_router)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[

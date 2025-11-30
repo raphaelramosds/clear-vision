@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 class ValueObject(BaseModel):
     """
-    Base class for value objects in Domain Driven Design.
+    Base class for value objects.
     Value objects are immutable and defined by their attributes' values.
     """
 
