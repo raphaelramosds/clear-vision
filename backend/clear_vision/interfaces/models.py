@@ -3,9 +3,6 @@ import typing as t
 from abc import ABC, abstractmethod
 from transformers.utils import logging
 
-from clear_vision.domain.value_objects import TargetDetection, VideoFrame
-
-
 class ChatbotModelInterface(ABC):
 
     def __init__(self, model_id: str):

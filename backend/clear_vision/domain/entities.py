@@ -29,14 +29,11 @@ class Entity(BaseModel):
 
 class Video(Entity):
     video_path: str
-    frames: t.List[VideoFrame]
+    frames: t.Optional[t.List[VideoFrame]] = []
 
 
 # TODO transform this into an aggregate
 class Inference(Entity):
-    
-    # TODO save video UIDs on a repository (future)
-    # video_uid: str
-
+    video_uid: str
     target: str
     detections: t.List[TargetDetection]

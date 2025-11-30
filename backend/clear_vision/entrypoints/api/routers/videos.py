@@ -1,10 +1,12 @@
 import asyncio
-import uuid
-from os import path as os_path
-from typing import Annotated
+import os
 from fastapi import APIRouter, Depends, Form, UploadFile, WebSocket, WebSocketDisconnect
 from tempfile import NamedTemporaryFile
 from dependency_injector.wiring import inject, Provide
+
+from clear_vision.domain.entities import Video
+from clear_vision.domain.services import VideoService
+from clear_vision.interfaces.repositories import VideoRepositoryInterface
 
 videos_router = APIRouter(prefix="/clear-vision/v1")
 
@@ -13,74 +15,78 @@ processing_tasks = {}
 
 @videos_router.post("/upload/")
 @inject
-async def upload(
+async def upload_video(
     video: UploadFile,
-    user_prompt: Annotated[str, Form()],
+    video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
 ):
-    dot_ext = os_path.splitext(video.filename)[1]
+    dot_ext = os.path.splitext(video.filename)[1]
     content = await video.read()
-    size_mb = len(content) / (1024 * 1024)
 
     temp = NamedTemporaryFile(delete=False, suffix=dot_ext)
     temp.write(content)
     temp.flush()
 
-    job_id = str(uuid.uuid4())
+    service = VideoService(video_repository=video_repository)
+    model = service.add_video(video_path=temp.name)
 
-    task = asyncio.create_task(
-        process_video(
-            job_id=job_id,
-            path=temp.name,
-            user_prompt=user_prompt,
-        )
-    )
-    processing_tasks[job_id] = {"status": "processing", "task": task}
-
-    return {"job_id": job_id, "message": "Upload recebido. Processando em background."}
+    return {
+        "message": "File uploaded",
+        "file": model.model_dump(),
+    }
 
 
-async def process_video(job_id: str, path: str, user_prompt: str):
-    try:
-        response = None # TODO
-        processing_tasks[job_id] = {
-            "status": "done",
-            "result": response,
-        }
+# @inject
+# async def run_video_target_detection(
+#     job_id: str,
+#     path: str,
+#     target: str,
+#     frame_sampler: FrameSamplerInterface = Depends(Provide["frame_sampler"]),
+#     detector: GeneralTargetDetectorInterface = Depends(Provide["detector"]),
+# ):
+#     try:
+#         # inference_service = InferenceService(
+#         #     detector=detector, frame_sampler=frame_sampler
+#         # )
 
-    except Exception as e:
-        processing_tasks[job_id] = {"status": "error", "error": str(e)}
-    finally:
-        pass
+#         processing_tasks[job_id] = {
+#             "status": "done",
+#             # "result": inference_service.run_video_target_detection(
+#             #     video_path=path, target=target
+#             # ),
+#             "result": "pronto",
+#         }
+
+#     except Exception as e:
+#         processing_tasks[job_id] = {"status": "error", "error": str(e)}
+#     finally:
+#         pass
 
 
-@videos_router.websocket("/ws/{job_id}")
-async def ws_job_status(websocket: WebSocket, job_id: str):
-    await websocket.accept()
-    try:
-        while True:
-            await asyncio.sleep(1)
-            task_info = processing_tasks.get(job_id)
-            if not task_info:
-                await websocket.send_json({"status": "not_found"})
-                break
+# @videos_router.websocket("/ws/{job_id}")
+# async def ws_job_status(websocket: WebSocket, job_id: str):
+#     await websocket.accept()
+#     try:
+#         while True:
+#             await asyncio.sleep(1)
+#             task_info = processing_tasks.get(job_id)
+#             if not task_info:
+#                 await websocket.send_json({"status": "not_found"})
+#                 break
 
-            if task_info["status"] == "done":
-                await websocket.send_json(
-                    {
-                        "status": "done",
-                        # "result" : "something"
-                    }
-                )
-                break
-            elif task_info["status"] == "error":
-                await websocket.send_json(
-                    {
-                        "status": "error",
-                        "message": task_info.get("error"),
-                    }
-                )
-                break
-            else:
-                await websocket.send_json({"status": "processing"})
-    except WebSocketDisconnect:
-        print(f"Cliente desconectado do job {job_id}")
+#             if task_info["status"] == "done":
+#                 await websocket.send_json(
+#                     {"status": "done", "result": task_info.model_dump()}
+#                 )
+#                 break
+#             elif task_info["status"] == "error":
+#                 await websocket.send_json(
+#                     {
+#                         "status": "error",
+#                         "message": task_info.get("error"),
+#                     }
+#                 )
+#                 break
+#             else:
+#                 await websocket.send_json({"status": "processing"})
+#     except WebSocketDisconnect:
+#         print(f"Cliente desconectado do job {job_id}")

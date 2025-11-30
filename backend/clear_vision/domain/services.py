@@ -1,35 +1,74 @@
-from clear_vision.domain.entities import Inference
+import typing as t
+
+from clear_vision.domain.entities import Inference, Video
+from clear_vision.domain.exceptions import InferenceNotFoundError, InferencesNotFoundError, VideoNotFoundError
 from clear_vision.interfaces.detectors import GeneralTargetDetectorInterface
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
+from clear_vision.interfaces.repositories import (
+    InferenceRepositoryInterface,
+    VideoRepositoryInterface,
+)
+
+
+class VideoService:
+
+    def __init__(self, video_repository: VideoRepositoryInterface) -> None:
+        self.video_repository = video_repository
+
+    def add_video(self, video_path: str) -> Video:
+        video = self.video_repository.add(Video(video_path=video_path))
+        return video
+
+    def get_video(self, video_uid: str) -> Video:
+        video = self.video_repository.get(uid=video_uid)
+
+        if not video:
+            raise VideoNotFoundError(f"Could not find video with UUID {video_uid}")
+
+        return video
 
 
 class InferenceService:
 
     def __init__(
         self,
+        inference_repository: InferenceRepositoryInterface,
         detector: GeneralTargetDetectorInterface,
         frame_sampler: FrameSamplerInterface,
+        video_service: VideoService,
     ) -> None:
+        self.inference_repository = inference_repository
         self.detector = detector
         self.frame_sampler = frame_sampler
+        self.video_service = video_service
 
-    # TODO persist inferences result on a repository
-    def get_inference_result(self, video_uid: str): ...
-
-    def list_inference_results(self): ...
-
-    def run_video_target_detection(
-        self,
-        video_path: str,
-        target: str,
-    ) -> Inference:
-        samples = self.frame_sampler.sample(video_path=video_path)
-        detections = self.detector.detect_many(video_frames=samples, target=target)
-        inference_result = Inference(
-            target=target,
-            detections=[
-                detection for detection in detections if detection.target_exists == True
-            ],
+    def add_inference(self, video_uid: str, target: str) -> Inference:
+        video = self.video_service.get_video(video_uid=video_uid)
+        detections = self.detector.run_video_target_detection(
+            video_path=video.video_path, target=target, frame_sampler=self.frame_sampler
         )
 
-        return inference_result
+        inference = Inference(target=target, video_uid=video_uid, detections=detections)
+        self.inference_repository.add(inference)
+
+        return inference
+
+    def get_inference(self, inference_uid: str) -> Inference:
+        inference = self.inference_repository.get(uid=inference_uid)
+
+        if not inference:
+            raise InferenceNotFoundError(
+                f"Could not find inference with UUID {inference_uid}"
+            )
+
+        return inference
+
+    def get_video_inferences(self, video_uid: str) -> t.Optional[t.List[Inference]]:
+        inferences = self.inference_repository.get_where(where_dict={"video_uid": video_uid})
+
+        if not inferences:
+            raise InferencesNotFoundError(
+                f"Could not find inferences for video {video_uid}"
+            )
+
+        return inferences

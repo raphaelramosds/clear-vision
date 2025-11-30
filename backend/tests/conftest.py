@@ -1,7 +1,18 @@
-from unittest.mock import MagicMock, patch
-
+import pytest_asyncio
 import numpy as np
 import pytest
+
+from unittest.mock import MagicMock, patch
+from httpx import ASGITransport, AsyncClient
+from clear_vision.adapters.repositories import (
+    InferenceInMemoryRepository,
+    VideoInMemoryRepository,
+)
+from clear_vision.domain.entities import Inference, Video
+from clear_vision.domain.services import InferenceService, VideoService
+from clear_vision.domain.value_objects import VideoFrame
+from clear_vision.entrypoints.api.main import app
+from tests.fakes import FakeDetector, FakeFrameSampler
 
 
 @pytest.fixture
@@ -28,3 +39,13 @@ def mock_video_capture():
 
         mock_cap.configure = configure
         yield mock_cap
+
+
+@pytest_asyncio.fixture
+async def async_client():
+    transport = ASGITransport(app=app)
+
+    async with AsyncClient(
+        transport=transport, base_url="http://0.0.0.0/clear-vision/v1"
+    ) as client:
+        yield client

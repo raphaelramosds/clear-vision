@@ -3,6 +3,7 @@ import typing as t
 
 from abc import ABC
 from clear_vision.domain.value_objects import TargetDetection, VideoFrame
+from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 
 
 class GeneralTargetDetectorInterface(ABC):
@@ -28,3 +29,10 @@ class GeneralTargetDetectorInterface(ABC):
             self.detect(video_frame=video_frame, target=target)
             for video_frame in video_frames
         ]
+
+    def run_video_target_detection(
+        self, video_path: str, target: str, frame_sampler: FrameSamplerInterface
+    ) -> t.List[TargetDetection]:
+        samples = frame_sampler.sample(video_path=video_path)
+        detections = self.detect_many(video_frames=samples, target=target)
+        return detections
