@@ -35,18 +35,33 @@ def create_app() -> FastAPI:
 def openapi_settings():
     if app.openapi_schema:
         return app.openapi_schema
+
     openapi_schema = get_openapi(
         title="Clear Vision API",
         version="0.1.0",
-        summary="API to handle video uploading",
-        description="Upload large videos on this API and experiment a little timeout",
+        summary="Video processing API with natural-language target detection",
+        description=(
+            "The Clear Vision API enables uploading and managing videos, as well as running "
+            "inference processes to detect targets described using natural language.\n\n"
+            "It provides endpoints for:\n"
+            "- Uploading and registering videos\n"
+            "- Retrieving videos and metadata\n"
+            "- Running inference using custom detection models\n"
+            "- Fetching inferences by ID or by associated video\n\n"
+            "The API is built following clean architecture principles, offering interchangeable "
+            "repositories, asynchronous processing support, and straightforward integration with "
+            "analysis and monitoring systems."
+        ),
         routes=app.routes,
     )
+
     openapi_schema["info"]["x-logo"] = {
         "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
     }
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
+
 
 
 app = create_app()
