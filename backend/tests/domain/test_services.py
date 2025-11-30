@@ -47,8 +47,6 @@ def test_add_inference():
 
     inference_service = InferenceService(
         inference_repository=inference_repository,
-        detector=FakeDetector(),
-        frame_sampler=FakeFrameSampler(),
         video_service=VideoService(video_repository=video_repository),
     )
 
@@ -56,7 +54,10 @@ def test_add_inference():
     video = videos[0]
 
     inference = inference_service.add_inference(
-        video_uid=str(video.uid), target="a fake target"
+        video_uid=str(video.uid),
+        target="a fake target",
+        detector=FakeDetector(),
+        frame_sampler=FakeFrameSampler(),
     )
 
     assert inference.video_uid == str(video.uid)
@@ -72,14 +73,17 @@ def test_get_inference_by_uid():
 
     inference_service = InferenceService(
         inference_repository=inference_repository,
-        detector=FakeDetector(),
-        frame_sampler=FakeFrameSampler(),
         video_service=VideoService(video_repository=video_repository),
     )
 
     video = video_repository.get_all()[0]
 
-    new_inf = inference_service.add_inference(video_uid=str(video.uid), target="car")
+    new_inf = inference_service.add_inference(
+        video_uid=str(video.uid),
+        target="car",
+        detector=FakeDetector(),
+        frame_sampler=FakeFrameSampler(),
+    )
 
     inf = inference_service.get_inference(str(new_inf.uid))
 
@@ -94,17 +98,22 @@ def test_get_video_inferences():
         videos=[Video(video_path="/tmp/test.mp4")]
     )
 
+    detector = FakeDetector()
+    frame_sampler = FakeFrameSampler()
+
     inference_service = InferenceService(
         inference_repository=inference_repository,
-        detector=FakeDetector(),
-        frame_sampler=FakeFrameSampler(),
         video_service=VideoService(video_repository=video_repository),
     )
 
     video = video_repository.get_all()[0]
 
-    inf1 = inference_service.add_inference(str(video.uid), target="person")
-    inf2 = inference_service.add_inference(str(video.uid), target="car")
+    inf1 = inference_service.add_inference(
+        str(video.uid), target="person", detector=detector, frame_sampler=frame_sampler
+    )
+    inf2 = inference_service.add_inference(
+        str(video.uid), target="car", detector=detector, frame_sampler=frame_sampler
+    )
 
     inferences = inference_service.get_video_inferences(video_uid=str(video.uid))
 
@@ -120,8 +129,6 @@ def test_get_inference_not_found():
 
     inference_service = InferenceService(
         inference_repository=inference_repository,
-        detector=FakeDetector(),
-        frame_sampler=FakeFrameSampler(),
         video_service=VideoService(video_repository=video_repository),
     )
 

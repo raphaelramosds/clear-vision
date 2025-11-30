@@ -1,7 +1,11 @@
 import typing as t
 
 from clear_vision.domain.entities import Inference, Video
-from clear_vision.domain.exceptions import InferenceNotFoundError, InferencesNotFoundError, VideoNotFoundError
+from clear_vision.domain.exceptions import (
+    InferenceNotFoundError,
+    InferencesNotFoundError,
+    VideoNotFoundError,
+)
 from clear_vision.interfaces.detectors import GeneralTargetDetectorInterface
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 from clear_vision.interfaces.repositories import (
@@ -33,19 +37,21 @@ class InferenceService:
     def __init__(
         self,
         inference_repository: InferenceRepositoryInterface,
-        detector: GeneralTargetDetectorInterface,
-        frame_sampler: FrameSamplerInterface,
         video_service: VideoService,
     ) -> None:
         self.inference_repository = inference_repository
-        self.detector = detector
-        self.frame_sampler = frame_sampler
         self.video_service = video_service
 
-    def add_inference(self, video_uid: str, target: str) -> Inference:
+    def add_inference(
+        self,
+        video_uid: str,
+        target: str,
+        detector: GeneralTargetDetectorInterface,
+        frame_sampler: FrameSamplerInterface,
+    ) -> Inference:
         video = self.video_service.get_video(video_uid=video_uid)
-        detections = self.detector.run_video_target_detection(
-            video_path=video.video_path, target=target, frame_sampler=self.frame_sampler
+        detections = detector.run_video_target_detection(
+            video_path=video.video_path, target=target, frame_sampler=frame_sampler
         )
 
         inference = Inference(target=target, video_uid=video_uid, detections=detections)
@@ -64,7 +70,9 @@ class InferenceService:
         return inference
 
     def get_video_inferences(self, video_uid: str) -> t.Optional[t.List[Inference]]:
-        inferences = self.inference_repository.get_where(where_dict={"video_uid": video_uid})
+        inferences = self.inference_repository.get_where(
+            where_dict={"video_uid": video_uid}
+        )
 
         if not inferences:
             raise InferencesNotFoundError(
