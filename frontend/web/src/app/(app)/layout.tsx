@@ -13,7 +13,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <Box 
-        minWidth="100vh"
         minHeight="100vh" 
         display="flex"
         flexDirection="column"
@@ -24,7 +23,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         alignItems="center"
         gap={6}
         p={1}
-        my={3}
         sx={{
           background: "linear-gradient(135deg, #0d1117 0%, #0b1720 80%)",
           borderRadius: 1,
@@ -79,7 +77,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Typography>
       </Box>
 
-      <Box flex={1} px={3} py={4} maxWidth="1200px" mx="auto" width="100%" sx={{ color: "#9ea6ac" }}>
+      <Box flex={1} p={10} mx="auto" minWidth={900} sx={{ color: "#9ea6ac" }}>
         {children}
       </Box>
     </Box>

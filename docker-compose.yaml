@@ -25,6 +25,7 @@ services:
       context: ./frontend
     ports:
       - "3000:3000"
+    env_file: ./frontend/.env
     volumes:
       - ./frontend/package.json:/app/package.json
       - ./frontend/package-lock.json:/app/package-lock.json
@@ -41,6 +42,5 @@ services:
   #   volumes:
   #     # Map volume to downloaded model via ollama pull
   #     - ollama:/root/.ollama
-
 # volumes:
 #   ollama:

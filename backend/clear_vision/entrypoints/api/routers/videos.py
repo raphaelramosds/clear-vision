@@ -34,6 +34,16 @@ async def upload_video(
     }
 
 
+@videos_router.get("/videos")
+@inject
+def get_videos(
+    video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
+):
+    service = VideoService(video_repository=video_repository)
+    videos = service.get_videos()
+
+    return videos
+
 @videos_router.get("/videos/{video_uid}")
 @inject
 def get_video(

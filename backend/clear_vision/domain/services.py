@@ -30,6 +30,11 @@ class VideoService:
             raise VideoNotFoundError(f"Could not find video with UUID {video_uid}")
 
         return video
+    
+    def get_videos(self) -> t.Optional[t.List[Video]]:
+        videos = self.video_repository.get_all()
+        
+        return videos
 
 
 class InferenceService:
