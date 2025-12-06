@@ -3,10 +3,13 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 
 from clear_vision.config.containers import Container
+from clear_vision.config.logger import get_logger
 from clear_vision.entrypoints.api.routers.videos import videos_router
 from clear_vision.entrypoints.api.routers.inferences import inference_router
 from clear_vision.entrypoints.api.routers.healthcheck import healthcheck_router
+from clear_vision.infra.dynamodb.helpers import ddb_client_healthcheck, ddb_start_tables
 
+logger = get_logger(name=__name__)
 
 def create_app() -> FastAPI:
     container = Container()
@@ -22,12 +25,23 @@ def create_app() -> FastAPI:
         allow_origins=[
             "*"
             # "http://localhost:3000",  # frontend Next.js
-            # "http://127.0.0.1:3000",  # caso use localhost alternativo
         ],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    try:
+        logger.info('Trying connection with DynamoDB')
+        ddb_client_healthcheck()
+        logger.info('Connection with DynamoDB established')
+
+        logger.info('Will try to create application tables')
+        ddb_start_tables()
+
+    except Exception as e:
+        logger.warning('Something went wrong with DynamoDB connection:')
+        logger.warning(e)
 
     return app
 

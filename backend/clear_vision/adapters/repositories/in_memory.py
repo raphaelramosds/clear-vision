@@ -1,6 +1,6 @@
 import typing as t
 
-from clear_vision.domain.entities import Entity, Inference, Video
+from clear_vision.domain.entities import Inference, Video
 from clear_vision.interfaces.repositories import (
     InferenceRepositoryInterface,
     VideoRepositoryInterface,
@@ -27,7 +27,7 @@ class VideoInMemoryRepository(VideoRepositoryInterface):
 
 class InferenceInMemoryRepository(InferenceRepositoryInterface):
 
-    def __init__(self, inferences: t.List[Inference]):
+    def __init__(self, inferences: t.List[Inference] = []):
         self._inferences = inferences
 
     def add(self, inference):

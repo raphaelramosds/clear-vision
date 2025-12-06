@@ -1,5 +1,5 @@
 import pytest
-from clear_vision.adapters.repositories import (
+from clear_vision.adapters.repositories.in_memory import (
     InferenceInMemoryRepository,
     VideoInMemoryRepository,
 )

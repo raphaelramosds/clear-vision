@@ -31,7 +31,7 @@ export default function Welcome() {
           </Box>
 
           <Typography variant="body2" sx={{ color: "#aab1bb" }} mb={3}>
-            Extraia insights visuais de vídeos de forma simples
+            Encontre o que quiser em um vídeo com um clique
           </Typography>
 
           <Button

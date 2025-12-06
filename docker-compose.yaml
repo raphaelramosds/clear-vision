@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   api:
     image: raphael/clear-vision-api:local
@@ -17,6 +16,17 @@ services:
       # DEVELOPMENT only: monitor changes on .py files to reload server
       - |
         poetry run uvicorn clear_vision.entrypoints.api.main:app --host 0.0.0.0 --port 4000 --reload
+    depends_on:
+        dynamodb:
+          condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: "fake"
+      AWS_SECRET_ACCESS_KEY: "fake"
+      AWS_REGION: "us-east-1"
+      VIDEOS_TABLE: "Videos"
+      INFERENCES_TABLE: "Inferences"
+      INFERENCES_GSI: "video_uid_idx"
+      DYNAMODB_ENDPOINT_URL: "http://dynamodb:8000"
 
   frontend:
     image: raphael/clear-vision-frontend:local
@@ -42,5 +52,22 @@ services:
   #   volumes:
   #     # Map volume to downloaded model via ollama pull
   #     - ollama:/root/.ollama
+
+  dynamodb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    ports:
+      - "8000:8000"
+    volumes:
+      # RUN chmod a+wrx backend/clear_vision/infra/dynamodb !!!
+      - "./backend/clear_vision/infra/dynamodb/data:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 2s
+    
 # volumes:
 #   ollama:
