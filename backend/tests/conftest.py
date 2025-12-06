@@ -1,10 +1,11 @@
+import pytest
 import pytest_asyncio
 import numpy as np
-import pytest
 
 from unittest.mock import MagicMock, patch
 from httpx import ASGITransport, AsyncClient
 from clear_vision.entrypoints.api.main import app
+from clear_vision.infra.dynamodb.helpers import ddb_start_tables
 
 
 @pytest.fixture
@@ -24,9 +25,9 @@ def mock_video_capture():
                 return
 
             frames = [
-                (True, np.random.randint(0, 255, (240, 320, 3), dtype=np.uint8))
-                for _ in range(num_frames)
-            ] + [(False, None)]
+                         (True, np.random.randint(0, 255, (240, 320, 3), dtype=np.uint8))
+                         for _ in range(num_frames)
+                     ] + [(False, None)]
             mock_cap.read.side_effect = frames
 
         mock_cap.configure = configure
@@ -38,6 +39,6 @@ async def async_client():
     transport = ASGITransport(app=app)
 
     async with AsyncClient(
-        transport=transport, base_url="http://0.0.0.0/clear-vision/v1"
+            transport=transport, base_url="http://0.0.0.0/clear-vision/v1"
     ) as client:
         yield client

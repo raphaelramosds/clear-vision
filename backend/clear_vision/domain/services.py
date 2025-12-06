@@ -1,5 +1,6 @@
 import typing as t
 
+from clear_vision.config.logger import get_logger
 from clear_vision.domain.entities import Inference, Video
 from clear_vision.domain.exceptions import (
     InferenceNotFoundError,
@@ -12,7 +13,6 @@ from clear_vision.interfaces.repositories import (
     InferenceRepositoryInterface,
     VideoRepositoryInterface,
 )
-
 
 class VideoService:
 

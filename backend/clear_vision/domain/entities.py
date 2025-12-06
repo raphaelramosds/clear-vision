@@ -13,7 +13,7 @@ class Entity(BaseModel):
     by their attributes' values.
     """
 
-    uid: t.Union[uuid.UUID, str] = Field(default_factory=uuid.uuid4)
+    uid: str = Field(default_factory=lambda: str(uuid.uuid4()))
 
     def __eq__(self, other):
         if isinstance(other, type(self)):
@@ -32,7 +32,6 @@ class Video(Entity):
     frames: t.Optional[t.List[VideoFrame]] = []
 
 
-# TODO transform this into an aggregate
 class Inference(Entity):
     video_uid: str
     target: str

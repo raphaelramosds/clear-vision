@@ -4,10 +4,13 @@ from clear_vision.infra.dynamodb.connection import Connection
 logger = get_logger(name=__name__)
 
 base_client = Connection.client()
+base_resource = Connection.resource()
+
 
 def ddb_client_healthcheck():
     tables = base_client.list_tables().get("TableNames", [])
     logger.info(f"Found {len(tables)} tables. Connection seems to work.")
+
 
 def ddb_start_tables():
     tables = base_client.list_tables().get("TableNames", [])
@@ -35,13 +38,14 @@ def ddb_start_tables():
         base_client.create_table(
             TableName="Inferences",
             KeySchema=[
-                {"AttributeName": "inference_uid", "KeyType": "HASH"},
+                {"AttributeName": "uid", "KeyType": "HASH"},
             ],
             AttributeDefinitions=[
-                {"AttributeName": "inference_uid", "AttributeType": "S"},
+                {"AttributeName": "uid", "AttributeType": "S"},
                 {"AttributeName": "video_uid", "AttributeType": "S"},
             ],
             BillingMode="PAY_PER_REQUEST",
+            # GSI
             GlobalSecondaryIndexes=[
                 {
                     "IndexName": "video_uid_idx",
@@ -52,6 +56,18 @@ def ddb_start_tables():
                 }
             ],
         )
-
         base_client.get_waiter("table_exists").wait(TableName="Inferences")
     logger.info("Inferences table created")
+
+
+def ddb_refresh_tables():
+    tables = base_client.list_tables().get("TableNames", [])
+
+    for table_name in ("Videos", "Inferences"):
+        if table_name in tables:
+            base_client.delete_table(TableName=table_name)
+
+            waiter = base_client.get_waiter("table_not_exists")
+            waiter.wait(TableName=table_name)
+
+    ddb_start_tables()

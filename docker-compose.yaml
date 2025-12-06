@@ -27,6 +27,12 @@ services:
       INFERENCES_TABLE: "Inferences"
       INFERENCES_GSI: "video_uid_idx"
       DYNAMODB_ENDPOINT_URL: "http://dynamodb:8000"
+    deploy:
+      resources:
+        limits:
+          memory: "12G"
+        reservations:
+          memory: "4G" # At least 4 gigs reserved
 
   frontend:
     image: raphael/clear-vision-frontend:local
@@ -59,8 +65,22 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # RUN chmod a+wrx backend/clear_vision/infra/dynamodb !!!
       - "./backend/clear_vision/infra/dynamodb/data:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 2s
+
+  dynamodb-pytest:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    ports:
+      - "8005:8000"
+    volumes:
+      - "./backend/tests/adapters/repositories/data:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
     healthcheck:
       test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]

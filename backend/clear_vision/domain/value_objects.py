@@ -1,7 +1,7 @@
 import typing as t
 import numpy as np
 from pydantic import BaseModel, ConfigDict
-
+from decimal import Decimal
 
 class ValueObject(BaseModel):
     """
@@ -16,11 +16,11 @@ class ValueObject(BaseModel):
 
 
 class TargetDetection(ValueObject):
-    ts: float
+    ts: Decimal
     target_exists: bool
     description: t.Optional[str] = None
 
 
 class VideoFrame(ValueObject):
     data: np.ndarray
-    ts: float
+    ts: Decimal

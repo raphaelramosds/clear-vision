@@ -5,22 +5,23 @@ from clear_vision.adapters.repositories.in_memory import (
     VideoInMemoryRepository,
 )
 from clear_vision.domain.entities import Inference, Video
-from clear_vision.domain.value_objects import TargetDetection
 from clear_vision.entrypoints.api.main import app
 from tests.fakes import FakeDetector, FakeFrameSampler
 
 
 @pytest.mark.asyncio
 async def test_upload_video(tmp_path, async_client):
+    video_repository = VideoInMemoryRepository(videos=[])
     test_file = tmp_path / "fake.mp4"
     test_file.write_bytes(b"fake video bytes")
 
-    with open(test_file, "rb") as f:
-        response = await async_client.post(
-            "/videos/upload/",
-            files={"video": ("fake.mp4", f, "video/mp4")},
-        )
-        assert response.status_code == 200
+    with app.container.video_repository.override(video_repository):
+        with open(test_file, "rb") as f:
+            response = await async_client.post(
+                "/videos/upload/",
+                files={"video": ("fake.mp4", f, "video/mp4")},
+            )
+            assert response.status_code == 200
 
     json = response.json()
     assert json["message"] == "File uploaded"
@@ -123,6 +124,7 @@ async def test_get_inference(async_client):
     assert body["uid"] == str(inference.uid)
     assert body["video_uid"] == str(video.uid)
     assert body["target"] == "fake target"
+
 
 @pytest.mark.asyncio
 async def test_get_video_inferences(async_client):
