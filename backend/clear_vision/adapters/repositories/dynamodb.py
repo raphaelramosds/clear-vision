@@ -12,7 +12,6 @@ from clear_vision.interfaces.repositories import (
 class VideoDynamoDbRepository(VideoRepositoryInterface):
 
     def __init__(self):
-
         self.table = Connection.resource().Table(os.getenv("VIDEOS_TABLE", "Videos"))
 
     def add(self, video: Video) -> Video:
@@ -38,19 +37,19 @@ class VideoDynamoDbRepository(VideoRepositoryInterface):
 class InferenceDynamoDbRepository(InferenceRepositoryInterface):
 
     def __init__(self):
-        self.table = Connection.resource().Table(os.getenv("INFERENCES_TABLE", "InferencesTable"))
+        self.table = Connection.resource().Table(os.getenv("INFERENCES_TABLE", "Inferences"))
         self.gsi_name = os.getenv("INFERENCES_GSI", "video_uid_idx")
 
     def add(self, inference: Inference) -> Inference:
         item = inference.model_dump()
         self.table.put_item(
             Item=item,
-            ConditionExpression="attribute_not_exists(inference_uid)",
+            ConditionExpression="attribute_not_exists(uid)",
         )
         return inference
 
     def get(self, uid: str) -> t.Optional[Inference]:
-        resp = self.table.get_item(Key={"inference_uid": uid})
+        resp = self.table.get_item(Key={"uid": uid})
         if "Item" not in resp:
             return None
         return Inference(**resp["Item"])
