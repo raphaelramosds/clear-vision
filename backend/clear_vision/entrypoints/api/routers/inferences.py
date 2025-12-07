@@ -34,11 +34,9 @@ async def add_inference(
     logger.info(f'Target "{target}" requested on video {video_uid}')
 
     try:
-        video_service = VideoService(video_repository=video_repository)
-
         service = InferenceService(
             inference_repository=inference_repository,
-            video_service=video_service,
+            video_repository=video_repository,
         )
 
         # Move to another thread so it wont block future requests
@@ -68,11 +66,9 @@ def get_inference(
     ),
     video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
 ):
-    video_service = VideoService(video_repository=video_repository)
-
     service = InferenceService(
         inference_repository=inference_repository,
-        video_service=video_service,
+        video_repository=video_repository,
     )
 
     inference = service.get_inference(inference_uid)

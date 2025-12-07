@@ -70,10 +70,10 @@ class InferenceService:
     def __init__(
         self,
         inference_repository: InferenceRepositoryInterface,
-        video_service: VideoService,
+        video_repository: VideoRepositoryInterface,
     ) -> None:
         self.inference_repository = inference_repository
-        self.video_service = video_service
+        self.video_repository = video_repository
 
     def add_inference(
         self,
@@ -82,7 +82,10 @@ class InferenceService:
         detector: GeneralTargetDetectorInterface,
         frame_sampler: FrameSamplerInterface,
     ) -> Inference:
-        video = self.video_service.get_video(video_uid=video_uid)
+        video = self.video_repository.get(uid=video_uid)
+
+        if not video:
+            raise VideoNotFoundError(f"Video {video_uid} not found on repository")
 
         logger.info(f"Found video {video.video_path}. Will run target detection")
 
