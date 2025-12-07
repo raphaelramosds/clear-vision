@@ -29,23 +29,24 @@ services:
       DYNAMODB_ENDPOINT_URL: "http://dynamodb:8000"
     deploy:
       resources:
-        limits:
-          memory: "12G"
+        # limits:
+        #   memory: "12G"
         reservations:
-          memory: "4G" # At least 4 gigs reserved
+          # cpus: 2
+          memory: "6G" # At least 6 gigs reserved
 
-  frontend:
-    image: raphael/clear-vision-frontend:local
-    build:
-      dockerfile: Dev.dockerfile
-      context: ./frontend
-    ports:
-      - "3000:3000"
-    env_file: ./frontend/.env
-    volumes:
-      - ./frontend/package.json:/app/package.json
-      - ./frontend/package-lock.json:/app/package-lock.json
-      - ./frontend/web:/app/web
+  # frontend:
+  #   image: raphael/clear-vision-frontend:local
+  #   build:
+  #     dockerfile: Dev.dockerfile
+  #     context: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   env_file: ./frontend/.env
+  #   volumes:
+  #     - ./frontend/package.json:/app/package.json
+  #     - ./frontend/package-lock.json:/app/package-lock.json
+  #     - ./frontend/web:/app/web
 
   # ollama-server:
   #   image: raphael/clear-vision-ollama-server:local
@@ -74,20 +75,20 @@ services:
       retries: 20
       start_period: 2s
 
-  dynamodb-pytest:
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
-    image: "amazon/dynamodb-local:latest"
-    ports:
-      - "8005:8000"
-    volumes:
-      - "./backend/tests/adapters/repositories/data:/home/dynamodblocal/data"
-    working_dir: /home/dynamodblocal
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
-      interval: 2s
-      timeout: 2s
-      retries: 20
-      start_period: 2s
+  # dynamodb-pytest:
+  #   command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+  #   image: "amazon/dynamodb-local:latest"
+  #   ports:
+  #     - "8005:8000"
+  #   volumes:
+  #     - "./backend/tests/adapters/repositories/data:/home/dynamodblocal/data"
+  #   working_dir: /home/dynamodblocal
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
+  #     interval: 2s
+  #     timeout: 2s
+  #     retries: 20
+  #     start_period: 2s
     
 # volumes:
 #   ollama:

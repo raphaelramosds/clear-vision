@@ -29,8 +29,8 @@ export default function Videos() {
     const videosGateway = new VideosGatewayHttp();
 
     const loadVideos = async () => {
-        const data = await videosGateway.getVideos();
-        setVideos(data);
+        const { content } = await videosGateway.getVideos();
+        setVideos(content);
     };
 
     useEffect(() => {

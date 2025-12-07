@@ -1,15 +1,20 @@
+from math import e
 import os
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends, Response, UploadFile
 from tempfile import NamedTemporaryFile
 from dependency_injector.wiring import inject, Provide
 
+from clear_vision.config.logger import get_logger
 from clear_vision.domain.services import InferenceService, VideoService
+from clear_vision.entrypoints.api.api_models import BaseResponse, GetVideosResponse
 from clear_vision.interfaces.repositories import (
     InferenceRepositoryInterface,
     VideoRepositoryInterface,
 )
 
 videos_router = APIRouter(prefix="/clear-vision/v1")
+
+logger = get_logger(__name__)
 
 
 @videos_router.post("/videos/upload/")
@@ -37,12 +42,23 @@ async def upload_video(
 @videos_router.get("/videos")
 @inject
 def get_videos(
-    video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
+    response: Response,
+    video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"])
 ):
-    service = VideoService(video_repository=video_repository)
-    videos = service.get_videos()
-
-    return videos
+    try:
+        service = VideoService(video_repository=video_repository)
+        videos = service.get_videos()
+        response.status_code = 201
+        return GetVideosResponse(
+            message="Videos fetched successfully",
+            content=videos
+        )
+    except Exception as e:
+        logger.error(f'Unexpected error: {e}')
+        response.status_code = 500
+        return BaseResponse(
+            message=f"An unexpected error occurred while fetching videos"
+        )
 
 @videos_router.get("/videos/{video_uid}")
 @inject

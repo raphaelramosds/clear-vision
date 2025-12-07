@@ -5,16 +5,15 @@ from transformers.utils import logging
 
 class ChatbotModelInterface(ABC):
 
-    def __init__(self, model_id: str):
-        self.model_id = model_id
-        self.model = self._load_model(model_id=model_id)
+    def __init__(self):
+        self.model = self._load_model()
 
     @abstractmethod
-    def _load_model(self, model_id: str) -> t.Any: ...
+    def _load_model(self) -> t.Any: ...
 
 
 class HFChatbotModelInterface(ChatbotModelInterface):
 
-    def __init__(self, model_id):
-        super().__init__(model_id=model_id)
+    def __init__(self):
+        super().__init__()
         logging.set_verbosity_error()

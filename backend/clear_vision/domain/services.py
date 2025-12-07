@@ -14,6 +14,8 @@ from clear_vision.interfaces.repositories import (
     VideoRepositoryInterface,
 )
 
+logger = get_logger(__name__)
+
 class VideoService:
 
     def __init__(self, video_repository: VideoRepositoryInterface) -> None:
@@ -55,12 +57,19 @@ class InferenceService:
         frame_sampler: FrameSamplerInterface,
     ) -> Inference:
         video = self.video_service.get_video(video_uid=video_uid)
+
+        logger.info(f"Found video {video.video_path}. Will run target detection")
+
         detections = detector.run_video_target_detection(
             video_path=video.video_path, target=target, frame_sampler=frame_sampler
         )
 
+        logger.info(f"Detection finished. Will add it to inference repository.")
+
         inference = Inference(target=target, video_uid=video_uid, detections=detections)
         self.inference_repository.add(inference)
+
+        logger.info(f"Inference {inference.uid} added.")
 
         return inference
 

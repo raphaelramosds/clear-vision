@@ -1,11 +1,10 @@
+FROM python:3.12-slim AS base
+
 ARG APP_DIR="/app"
-ARG VENV_DIR="${APP_DIR}/.venv"
+WORKDIR ${APP_DIR}
 
-FROM python:3.12-slim AS build
-
-ARG APP_DIR
-ARG VENV_DIR
-ENV PATH="${VENV_DIR}/bin:${PATH}"
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
@@ -13,34 +12,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR ${APP_DIR}
-
 COPY pyproject.toml poetry.lock ./
-COPY clear_vision ./clear_vision/
 
-RUN python3 -m venv ${VENV_DIR}
-RUN ${VENV_DIR}/bin/pip install --no-cache-dir -U pip setuptools poetry urllib3
-RUN ${VENV_DIR}/bin/pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-RUN ${VENV_DIR}/bin/poetry install --no-root && \
-    rm -rf /root/.cache/pip /root/.cache/pypoetry && \
-    find . -type d -name "__pycache__" -exec rm -rf {} +
+RUN pip install --no-cache-dir poetry==2.1.4
 
-FROM python:3.12-slim AS production
+RUN poetry config virtualenvs.create false \
+    && poetry install --without dev --no-interaction
 
-ARG APP_DIR
-ARG VENV_DIR
-ENV PATH="${VENV_DIR}/bin:${PATH}"
+RUN pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1 \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR ${APP_DIR}
-
-COPY --from=build ${APP_DIR}/clear_vision ./clear_vision
-COPY --from=build ${VENV_DIR} ${VENV_DIR}
-COPY --from=build ${APP_DIR}/pyproject.toml ./
+COPY clear_vision ./clear_vision
 
 EXPOSE 4000
 
