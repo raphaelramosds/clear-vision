@@ -36,4 +36,9 @@ export default class VideosGatewayHttp {
         const response = await fetch(`${this.baseURL}/videos`, { cache: "no-store" });
         return response.json();
     }
+
+    async getVideo(uid: String): Promise<any> {
+        const response = await fetch(`${this.baseURL}/videos/${uid}`, { cache: "no-store" });
+        return response.json();
+    }
 }

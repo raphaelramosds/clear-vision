@@ -3,6 +3,7 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict
 from decimal import Decimal
 
+
 class ValueObject(BaseModel):
     """
     Base class for value objects.

@@ -29,7 +29,6 @@ class Entity(BaseModel):
 
 class Video(Entity):
     video_path: str
-    frames: t.Optional[t.List[VideoFrame]] = []
 
 
 class Inference(Entity):

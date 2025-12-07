@@ -1,21 +1,27 @@
 'use client';
 
 import Link from "next/link";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { LogoutOutlined } from "@mui/icons-material";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const isActive = (route: string) => pathname.startsWith(route);
 
+  const handleLogout = () => {
+    router.push("/");
+  };
+
   return (
-    <Box 
-        minHeight="100vh" 
-        display="flex"
-        flexDirection="column"
+    <Box
+      minHeight="100vh"
+      display="flex"
+      flexDirection="column"
     >
       <Box
         display="flex"
@@ -32,7 +38,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           zIndex: 10,
         }}
       >
-        <Link href="/">
+        <Link href="/dashboard">
           <img
             src="/clear-vision-icon.png"
             alt="Clear Vision"
@@ -75,6 +81,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <VideoLibraryIcon fontSize="small" />
           Vídeos
         </Typography>
+
+        <IconButton
+          onClick={handleLogout}
+          sx={{
+            color: "#9ea6ac",
+            "&:hover": { color: "#fff" }
+          }}
+        >
+          <LogoutOutlined />
+        </IconButton>
       </Box>
 
       <Box flex={1} p={10} mx="auto" minWidth={900} sx={{ color: "#9ea6ac" }}>

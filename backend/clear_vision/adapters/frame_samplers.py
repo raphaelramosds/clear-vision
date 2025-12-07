@@ -1,3 +1,5 @@
+from decimal import Decimal
+from typing import List
 import cv2
 
 from clear_vision.domain.value_objects import VideoFrame
@@ -28,7 +30,7 @@ class Cv2FullVideoFrameSampler(FrameSamplerInterface):
                 break
             if i % interval == 0:
                 rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                samples.append(VideoFrame(data=rgb, ts=(i / fps)))
+                samples.append(VideoFrame(data=rgb, ts=Decimal((i / fps))))
             i += 1
 
         cap.release()
@@ -39,3 +41,22 @@ class Cv2FullVideoFrameSampler(FrameSamplerInterface):
             )
 
         return samples
+
+    def sample_thumbnail(self, video_path: str):
+        cap = cv2.VideoCapture(video_path)
+
+        if not cap.isOpened():
+            raise ValueError(f"Could not open video file: {video_path}")
+
+        ret, frame = cap.read()
+        cap.release()
+
+        if frame is None:
+            raise ValueError(f"Could not read frame from video: {video_path}")
+
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        _, buffer = cv2.imencode(".png", frame)
+        frame_bytes = buffer.tobytes()
+
+        return frame_bytes

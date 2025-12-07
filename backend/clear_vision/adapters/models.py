@@ -33,11 +33,17 @@ class LlavaInterleaveQwenModel(HFChatbotModelInterface):
 
         model = LlavaForConditionalGeneration.from_pretrained(
             pretrained_model_name_or_path=self.local_model_path,
-            device_map={"" : "cpu"},
+            
+            # SLOW AS SHIT
+            # device_map={"" : "cpu"},
+
+            # FAST !!! (because it will offload on host GPUs)
+            device_map="auto",
+
             dtype=torch.float16,
             # quantization_config=quant,
-            low_cpu_mem_usage=False,
-            trust_remote_code=True  
+            # low_cpu_mem_usage=False,
+            # trust_remote_code=True  
         )
 
         return model

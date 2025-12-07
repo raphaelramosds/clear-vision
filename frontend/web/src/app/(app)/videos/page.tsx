@@ -12,7 +12,8 @@ import {
     Typography,
     Stack,
     CircularProgress,
-    Paper
+    Paper,
+    Grid
 } from "@mui/material";
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -20,17 +21,21 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 interface VideoDTO {
     uid: string;
     filename: string;
+    thumbnail: string;
 }
 
 export default function Videos() {
     const [videos, setVideos] = useState<VideoDTO[]>([]);
     const [loading, setLoading] = useState(false);
+    const [loadingVideos, setLoadingVideos] = useState(false);
     const router = useRouter();
     const videosGateway = new VideosGatewayHttp();
 
     const loadVideos = async () => {
+        setLoadingVideos(true);
         const { content } = await videosGateway.getVideos();
         setVideos(content);
+        setLoadingVideos(false);
     };
 
     useEffect(() => {
@@ -63,8 +68,8 @@ export default function Videos() {
                 sx={{
                     p: 3,
                     mb: 4,
-                    bgcolor: "#0d1117",
-                    border: "1px solid #30363d",
+                    bgcolor: "inherit",
+                    border: "none",
                     color: "#e6edf3",
                 }}
             >
@@ -101,47 +106,67 @@ export default function Videos() {
                 </Stack>
             )}
 
-            <Stack spacing={2}>
-                {videos.map((video) => (
-                    <Card
-                        key={video.uid}
-                        elevation={3}
-                        sx={{
-                            bgcolor: "#161b22",
-                            border: "1px solid #30363d",
-                            color: "#e6edf3",
-                        }}
-                    >
-                        <CardContent>
-                            <Typography variant="h6" fontWeight={500}>
-                                {video.filename}
-                            </Typography>
-                        </CardContent>
-
-                        <CardActions
+            <Grid container spacing={2}>
+                {videos && !loadingVideos ? videos.map((video) => (
+                    <Grid item xs={12} sm={6} md={4} key={video.uid}>
+                        <Card
+                            elevation={3}
                             sx={{
-                                justifyContent: "flex-end",
-                                p: 2,
+                                bgcolor: "#161b22",
+                                border: "1px solid #30363d",
+                                color: "#e6edf3",
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column"
                             }}
                         >
-                            <Button
-                                variant="outlined"
-                                onClick={() => goToVideo(video.uid)}
+                            <img
+                                src={`data:image/jpeg;base64,${video.thumbnail}`}
+                                alt={video.filename}
+                                style={{
+                                    width: "100%",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                    borderBottom: "1px solid #30363d"
+                                }}
+                            />
+
+                            <CardContent sx={{ flexGrow: 1 }}>
+                                <Typography variant="h6" fontWeight={500}>
+                                    {video.filename}
+                                </Typography>
+                            </CardContent>
+
+                            <CardActions
                                 sx={{
-                                    borderColor: "#30363d",
-                                    color: "#e6edf3",
-                                    "&:hover": {
-                                        borderColor: "#58a6ff",
-                                        color: "#58a6ff",
-                                    },
+                                    justifyContent: "flex-end",
+                                    p: 2,
                                 }}
                             >
-                                Perguntas
-                            </Button>
-                        </CardActions>
-                    </Card>
-                ))}
-            </Stack>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => goToVideo(video.uid)}
+                                    sx={{
+                                        borderColor: "#30363d",
+                                        color: "#e6edf3",
+                                        "&:hover": {
+                                            borderColor: "#58a6ff",
+                                            color: "#58a6ff",
+                                        },
+                                    }}
+                                >
+                                    Perguntas
+                                </Button>
+                            </CardActions>
+                        </Card>
+                    </Grid>
+                )) : (
+                    <Stack alignItems="center" sx={{ mb: 3, width: "100%" }}>
+                        <CircularProgress />
+                    </Stack>
+                )}
+            </Grid>
+
         </>
     );
 }

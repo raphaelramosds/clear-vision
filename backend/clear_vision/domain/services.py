@@ -1,8 +1,10 @@
 import typing as t
 
 from clear_vision.config.logger import get_logger
+from clear_vision.domain.dtos import VideoWithThumbnailDTO
 from clear_vision.domain.entities import Inference, Video
 from clear_vision.domain.exceptions import (
+    EmptyRepositoryError,
     InferenceNotFoundError,
     InferencesNotFoundError,
     VideoNotFoundError,
@@ -16,6 +18,7 @@ from clear_vision.interfaces.repositories import (
 
 logger = get_logger(__name__)
 
+
 class VideoService:
 
     def __init__(self, video_repository: VideoRepositoryInterface) -> None:
@@ -23,20 +26,43 @@ class VideoService:
 
     def add_video(self, video_path: str) -> Video:
         video = self.video_repository.add(Video(video_path=video_path))
+
         return video
 
-    def get_video(self, video_uid: str) -> Video:
+    def get_video(
+        self, video_uid: str, frame_sampler: FrameSamplerInterface
+    ) -> VideoWithThumbnailDTO:
         video = self.video_repository.get(uid=video_uid)
 
         if not video:
             raise VideoNotFoundError(f"Could not find video with UUID {video_uid}")
 
-        return video
-    
-    def get_videos(self) -> t.Optional[t.List[Video]]:
+        return VideoWithThumbnailDTO(
+            uid=video.uid, thumbnail=frame_sampler.sample_thumbnail(video.video_path)
+        )
+
+    def get_videos(
+        self, frame_sampler: FrameSamplerInterface
+    ) -> t.Optional[t.List[VideoWithThumbnailDTO]]:
+
         videos = self.video_repository.get_all()
-        
-        return videos
+
+        if not videos:
+            raise EmptyRepositoryError(f"There are no video records on our database")
+
+        return [
+            self._make_video_with_thumbnail_dto(
+                video=video, frame_sampler=frame_sampler
+            )
+            for video in videos
+        ]
+
+    def _make_video_with_thumbnail_dto(
+        self, video: Video, frame_sampler: FrameSamplerInterface
+    ):
+        return VideoWithThumbnailDTO(
+            uid=video.uid, thumbnail=frame_sampler.sample_thumbnail(video.video_path)
+        )
 
 
 class InferenceService:
