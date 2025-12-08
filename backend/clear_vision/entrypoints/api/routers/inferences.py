@@ -19,14 +19,14 @@ logger = get_logger(__name__)
 @inference_router.post("/inferences/")
 @inject
 async def add_inference(
-    video_uid: str,
-    target: str,
-    response: Response,
-    detector: GeneralTargetDetectorInterface = Depends(Provide["detector"]),
-    inference_repository: InferenceRepositoryInterface = Depends(
-        Provide["inference_repository"]
-    ),
-    video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
+        video_uid: str,
+        target: str,
+        response: Response,
+        detector: GeneralTargetDetectorInterface = Depends(Provide["detector"]),
+        inference_repository: InferenceRepositoryInterface = Depends(
+            Provide["inference_repository"]
+        ),
+        video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
 ):
     logger.info(f'Target "{target}" requested on video {video_uid}')
 
@@ -45,28 +45,13 @@ async def add_inference(
         )
         response.status_code = 200
 
-        return AddInferenceResponse(message="Inference completed", content=inference)
+        return AddInferenceResponse(
+            message="Inference completed",
+            uid=inference.uid,
+            video_uid=inference.video_uid
+        )
     except Exception as e:
         message = f"Error when adding inference: {e}"
         logger.exception(message)
         response.status_code = 500
         return BaseResponse(message=message)
-
-
-@inference_router.get("/inferences/{inference_uid}")
-@inject
-def get_inference(
-    inference_uid: str,
-    inference_repository: InferenceRepositoryInterface = Depends(
-        Provide["inference_repository"]
-    ),
-    video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
-):
-    service = InferenceService(
-        inference_repository=inference_repository,
-        video_repository=video_repository,
-    )
-
-    inference = service.get_inference(inference_uid)
-
-    return inference.model_dump()

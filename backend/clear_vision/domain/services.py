@@ -2,7 +2,7 @@ import base64
 import typing as t
 
 from clear_vision.config.logger import get_logger
-from clear_vision.domain.dtos import VideoWithThumbnailDTO
+from clear_vision.domain.dtos import VideoWithThumbnailDTO, InferenceSimplifiedDTO
 from clear_vision.domain.entities import Inference, Video
 from clear_vision.domain.exceptions import (
     EmptyRepositoryError,
@@ -125,3 +125,17 @@ class InferenceService:
             )
 
         return inferences
+
+    def get_video_inferences_simplified(self, video_uid: str) -> t.Optional[t.List[InferenceSimplifiedDTO]]:
+        inferences = self.inference_repository.get_where(
+            where_dict={"video_uid": video_uid}
+        )
+
+        if not inferences:
+            raise InferencesNotFoundError(
+                f"Could not find inferences for video {video_uid}"
+            )
+
+        return [
+            InferenceSimplifiedDTO.from_inference(inference) for inference in inferences
+        ]
