@@ -17,7 +17,10 @@ class Container(containers.DeclarativeContainer):
 
     frame_sampler = providers.Factory(Cv2FullVideoFrameSampler)
 
-    detector = providers.Factory(LlavaTargetDetector)
+    detector = providers.Factory(
+        LlavaTargetDetector,
+        frame_sampler
+    )
 
     video_repository = providers.Factory(
         VideoDynamoDbRepository

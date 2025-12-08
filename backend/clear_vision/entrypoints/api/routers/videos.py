@@ -101,11 +101,9 @@ def get_video_inferences(
     ),
     video_repository: VideoRepositoryInterface = Depends(Provide["video_repository"]),
 ):
-    video_service = VideoService(video_repository=video_repository)
-
     service = InferenceService(
         inference_repository=inference_repository,
-        video_service=video_service,
+        video_repository=video_repository,
     )
 
     inferences = service.get_video_inferences(video_uid)

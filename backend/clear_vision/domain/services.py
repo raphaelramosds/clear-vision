@@ -80,7 +80,6 @@ class InferenceService:
         video_uid: str,
         target: str,
         detector: GeneralTargetDetectorInterface,
-        frame_sampler: FrameSamplerInterface,
     ) -> Inference:
         video = self.video_repository.get(uid=video_uid)
 
@@ -89,8 +88,8 @@ class InferenceService:
 
         logger.info(f"Found video {video.video_path}. Will run target detection")
 
-        detections = detector.run_video_target_detection(
-            video_path=video.video_path, target=target, frame_sampler=frame_sampler
+        detections = detector(
+            video_path=video.video_path, target=target
         )
 
         logger.info(f"Detection finished. Will add it to inference repository.")

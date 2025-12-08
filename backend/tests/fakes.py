@@ -1,6 +1,7 @@
 import numpy as np
 
-from clear_vision.domain.value_objects import TargetDetection, ValueObject, VideoFrame
+from decimal import Decimal
+from clear_vision.domain.value_objects import TargetDetection, VideoFrame
 from clear_vision.interfaces.detectors import GeneralTargetDetectorInterface
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 from clear_vision.interfaces.models import (
@@ -9,38 +10,27 @@ from clear_vision.interfaces.models import (
 )
 
 
-class FakeValueObject(ValueObject):
-    a: int
-    b: str | None = None
-
-
 class FakeChatbotModel(ChatbotModelInterface):
 
-    def _load_model(self, model_id):
-        return f"fake-chatbot-{model_id}"
+    def _load_model(self):
+        return f"fake-chatbot"
 
 
 class FakeHFChatbotModel(HFChatbotModelInterface):
 
-    def _load_model(self, model_id):
-        return f"fake-hf-chatbot-{model_id}"
+    def _load_model(self):
+        return f"fake-hf-chatbot"
 
 
 class FakeDetector(GeneralTargetDetectorInterface):
 
-    def process_frame(self, frame, target):
-        return ""
-
-    def parse_model_response(self, model_response):
-        return {}
-
-    def run_video_target_detection(self, video_path, target, frame_sampler):
+    def __call__(self, video_path, target):
         return [
             TargetDetection(
-                description="Fake target found", target_exists=True, ts=1.0
+                description="Fake target found", target_exists=True, ts=Decimal(1.0)
             ),
             TargetDetection(
-                description="Fake target found", target_exists=True, ts=4.0
+                description="Fake target found", target_exists=True, ts=Decimal(4.0)
             ),
         ]
 
@@ -48,4 +38,7 @@ class FakeDetector(GeneralTargetDetectorInterface):
 class FakeFrameSampler(FrameSamplerInterface):
 
     def sample(self, video_path):
-        return [VideoFrame(data=np.array([0]), ts=1.0)]
+        return [VideoFrame(data=np.array([0]), ts=Decimal(1.0))]
+
+    def sample_thumbnail(self, video_path: str) -> bytes:
+        return bytearray()

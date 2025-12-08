@@ -25,7 +25,6 @@ async def add_inference(
     target: str,
     response: Response,
     detector: GeneralTargetDetectorInterface = Depends(Provide["detector"]),
-    frame_sampler: FrameSamplerInterface = Depends(Provide["frame_sampler"]),
     inference_repository: InferenceRepositoryInterface = Depends(
         Provide["inference_repository"]
     ),
@@ -45,7 +44,6 @@ async def add_inference(
             video_uid=video_uid,
             target=target,
             detector=detector,
-            frame_sampler=frame_sampler,
         )
         response.status_code = 200
 

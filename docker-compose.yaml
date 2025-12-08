@@ -82,20 +82,20 @@ services:
       retries: 20
       start_period: 2s
 
-  # dynamodb-pytest:
-  #   command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
-  #   image: "amazon/dynamodb-local:latest"
-  #   ports:
-  #     - "8005:8000"
-  #   volumes:
-  #     - "./backend/tests/adapters/repositories/data:/home/dynamodblocal/data"
-  #   working_dir: /home/dynamodblocal
-  #   healthcheck:
-  #     test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
-  #     interval: 2s
-  #     timeout: 2s
-  #     retries: 20
-  #     start_period: 2s
+  dynamodb-pytest:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    ports:
+      - "8005:8000"
+    volumes:
+      - "./backend/tests/adapters/repositories/data:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 2s
     
 # volumes:
 #   ollama:

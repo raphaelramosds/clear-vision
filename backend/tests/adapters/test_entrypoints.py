@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from clear_vision.adapters.repositories.in_memory import (
@@ -42,12 +44,22 @@ async def test_get_video_success(async_client):
     video = video_repository.get_all()[0]
 
     with app.container.video_repository.override(video_repository):
-        response = await async_client.get(f"/videos/{video.uid}")
+        frame_sampler = app.container.frame_sampler()
+
+        with patch.object(
+                frame_sampler,
+                "sample_thumbnail",
+                return_value=b"fake-thumbnail",
+        ) as mock_sample_thumbnail:
+            # Inject our mocked frame sampler
+            with app.container.frame_sampler.override(frame_sampler):
+                response = await async_client.get(f"/videos/{video.uid}")
+                mock_sample_thumbnail.assert_called_once_with(video.video_path)
 
     assert response.status_code == 200
 
     body = response.json()
-    assert body["uid"] == str(video.uid)
+    assert body["content"]["uid"] == str(video.uid)
 
 
 @pytest.mark.asyncio
@@ -63,8 +75,8 @@ async def test_add_inference(async_client):
     with (
         app.container.video_repository.override(video_repository),
         app.container.inference_repository.override(inference_repository),
-        app.container.detector.override(FakeDetector()),
         app.container.frame_sampler.override(FakeFrameSampler()),
+        app.container.detector.override(FakeDetector()),
     ):
         response = await async_client.post(
             "/inferences/",
@@ -77,15 +89,14 @@ async def test_add_inference(async_client):
     assert response.status_code == 200
 
     body = response.json()
-    assert body["video_uid"] == str(video.uid)
-    assert body["target"] == "fake target"
-    assert "detections" in body
-    assert len(body["detections"]) == 2
+    assert body["content"]["video_uid"] == str(video.uid)
+    assert body["content"]["target"] == "fake target"
+    assert "detections" in body["content"]
+    assert len(body["content"]["detections"]) == 2
 
 
 @pytest.mark.asyncio
 async def test_get_inference(async_client):
-    frame_sampler = FakeFrameSampler()
     detector = FakeDetector()
 
     video_repository = VideoInMemoryRepository(
@@ -98,10 +109,9 @@ async def test_get_inference(async_client):
     inference_repository = InferenceInMemoryRepository(
         inferences=[
             Inference(
-                detections=detector.run_video_target_detection(
+                detections=detector(
                     video_path=video.video_path,
                     target="fake target",
-                    frame_sampler=frame_sampler,
                 ),
                 video_uid=str(video.uid),
                 target="fake target",
@@ -128,7 +138,6 @@ async def test_get_inference(async_client):
 
 @pytest.mark.asyncio
 async def test_get_video_inferences(async_client):
-    frame_sampler = FakeFrameSampler()
     detector = FakeDetector()
 
     video_repository = VideoInMemoryRepository(
@@ -140,19 +149,17 @@ async def test_get_video_inferences(async_client):
     inference_repository = InferenceInMemoryRepository(
         inferences=[
             Inference(
-                detections=detector.run_video_target_detection(
+                detections=detector(
                     video_path=video.video_path,
                     target="target-1",
-                    frame_sampler=frame_sampler,
                 ),
                 video_uid=str(video.uid),
                 target="target-1",
             ),
             Inference(
-                detections=detector.run_video_target_detection(
+                detections=detector(
                     video_path=video.video_path,
                     target="target-2",
-                    frame_sampler=frame_sampler,
                 ),
                 video_uid=str(video.uid),
                 target="target-2",
