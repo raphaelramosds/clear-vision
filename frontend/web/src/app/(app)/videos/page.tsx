@@ -13,10 +13,13 @@ import {
     Stack,
     CircularProgress,
     Paper,
-    Grid
+    Grid,
+    IconButton,
+    Fab
 } from "@mui/material";
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { DeleteOutline, UploadFile } from "@mui/icons-material";
 
 interface VideoDTO {
     uid: string;
@@ -63,7 +66,7 @@ export default function Videos() {
 
     return (
         <>
-            <Paper
+            {/* <Paper
                 elevation={4}
                 sx={{
                     p: 3,
@@ -79,7 +82,7 @@ export default function Videos() {
                     alignItems="center"
                 >
                     <Typography variant="h5" fontWeight={600}>
-                        Vídeos
+                        Explorador de vídeos
                     </Typography>
 
                     <Button
@@ -95,69 +98,64 @@ export default function Videos() {
                         Adicionar vídeo
                     </Button>
                 </Stack>
-            </Paper>
+            </Paper> */}
 
-            {loading && (
+            {/* {loading && (
                 <Stack alignItems="center" sx={{ mb: 3 }}>
                     <CircularProgress />
                     <Typography variant="body2" sx={{ mt: 1, color: "#e6edf3" }}>
                         Enviando vídeo...
                     </Typography>
                 </Stack>
-            )}
+            )} */}
 
-            <Grid container spacing={2}>
+            <Grid container spacing={2} justifyContent="center">
                 {videos && !loadingVideos ? videos.map((video) => (
-                    <Grid item xs={12} sm={6} md={4} key={video.uid}>
+                    <Grid item xs={12} sm={6} md={6} key={video.uid}>
                         <Card
                             elevation={3}
+                            onClick={() => goToVideo(video.uid)}
                             sx={{
                                 bgcolor: "#161b22",
                                 border: "1px solid #30363d",
                                 color: "#e6edf3",
                                 height: "100%",
                                 display: "flex",
-                                flexDirection: "column"
+                                flexDirection: "column",
+                                cursor: "pointer",
+                                position: "relative",
+                                "&:hover .thumb": {
+                                    filter: "brightness(0.7)"
+                                }
                             }}
                         >
+                            <IconButton
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                }}
+                                sx={{
+                                    position: "absolute",
+                                    top: 8,
+                                    right: 8,
+                                    color: "#e6edf3",
+                                    "&:hover": { color: "#ff6b6b" }
+                                }}
+                            >
+                                <DeleteOutline />
+                            </IconButton>
+
                             <img
+                                className="thumb"
                                 src={`data:image/jpeg;base64,${video.thumbnail}`}
                                 alt={video.filename}
                                 style={{
                                     width: "100%",
-                                    height: "200px",
+                                    height: "230px",
                                     objectFit: "cover",
-                                    borderBottom: "1px solid #30363d"
+                                    borderBottom: "1px solid #30363d",
+                                    transition: "0.3s"
                                 }}
                             />
-
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography variant="h6" fontWeight={500}>
-                                    {video.filename}
-                                </Typography>
-                            </CardContent>
-
-                            <CardActions
-                                sx={{
-                                    justifyContent: "flex-end",
-                                    p: 2,
-                                }}
-                            >
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => goToVideo(video.uid)}
-                                    sx={{
-                                        borderColor: "#30363d",
-                                        color: "#e6edf3",
-                                        "&:hover": {
-                                            borderColor: "#58a6ff",
-                                            color: "#58a6ff",
-                                        },
-                                    }}
-                                >
-                                    Perguntas
-                                </Button>
-                            </CardActions>
                         </Card>
                     </Grid>
                 )) : (
@@ -167,6 +165,20 @@ export default function Videos() {
                 )}
             </Grid>
 
+
+            <Fab
+                color="primary"
+                onClick={handleAddVideo}
+                sx={{
+                    position: "fixed",
+                    bottom: 32,
+                    right: 32,
+                    bgcolor: "#2663f0",
+                    "&:hover": { bgcolor: "#1f4ec9" }
+                }}
+            >
+                <UploadFile />
+            </Fab>
         </>
     );
 }

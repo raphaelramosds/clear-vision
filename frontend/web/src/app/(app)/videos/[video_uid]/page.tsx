@@ -7,7 +7,8 @@ import {
     TextField,
     Button,
     Stack,
-    CircularProgress
+    CircularProgress,
+    Box
 } from "@mui/material";
 
 import InferencesGatewayHttp from "@infra/api/inferences/inferencesGatewayHttp";
@@ -66,41 +67,40 @@ export default function Video({ params }: { params: { video_uid: string } }) {
 
     return (
         <>
-            <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
-                <Button
-                    variant="outlined"
-                    onClick={() => router.push("/videos")}
-                    sx={{
-                        borderColor: "#30363d",
-                        color: "#e6edf3",
-                        ":hover": {
-                            borderColor: "#58a6ff",
-                            color: "#58a6ff",
-                        }
-                    }}
-                >
-                    Voltar
-                </Button>
-            </Stack>
-
             <Paper
                 elevation={4}
                 sx={{
                     p: 3,
                     mb: 4,
                     bgcolor: "#0d1117",
-                    border: "1px solid #30363d",
+                    // border: "1px solid #30363d",
                     color: "#e6edf3",
                 }}
             >
+                <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => router.push("/videos")}
+                        sx={{
+                            borderColor: "#30363d",
+                            color: "#e6edf3",
+                            ":hover": {
+                                borderColor: "#58a6ff",
+                                color: "#58a6ff",
+                            }
+                        }}
+                    >
+                        Voltar
+                    </Button>
+                </Stack>
                 {video && video.thumbnail && (
                     <Paper
                         elevation={3}
                         sx={{
-                            p: 2,
+                            // p: 2,
                             mb: 3,
                             bgcolor: "#161b22",
-                            border: "1px solid #30363d",
+                            // border: "1px solid #30363d",
                             color: "#e6edf3",
                         }}
                     >
@@ -111,8 +111,8 @@ export default function Video({ params }: { params: { video_uid: string } }) {
                                 width: "100%",
                                 maxHeight: "300px",
                                 objectFit: "cover",
-                                borderRadius: 8,
-                                border: "1px solid #30363d"
+                                // borderRadius: 8,
+                                // border: "1px solid #30363d"
                             }}
                         />
                     </Paper>
@@ -158,7 +158,6 @@ export default function Video({ params }: { params: { video_uid: string } }) {
 
                 {inferences.length > 0 && (
                     <Stack
-                        // maxWidth={700}
                         spacing={3}
                         sx={{
                             mt: 4,
@@ -186,23 +185,30 @@ export default function Video({ params }: { params: { video_uid: string } }) {
                                     },
                                 }}
                             >
-                                <Typography variant="h6" sx={{ mb: 2 }}>
-                                    {inference.target}
-                                </Typography>
 
-                                <Stack direction="row">
+                                <Stack direction="row" alignItems="center" spacing={1} mb={3}>
+                                    <Typography fontWeight="bold">
+                                        "{inference.target}"
+                                    </Typography>
+
+                                    <Typography color="lightgrey">
+                                        pode ser encontrado nos instantes
+                                    </Typography>
+                                </Stack>
+
+                                <Stack direction="row" gap={1}>
                                     {inference.timestamps.map((ts: string, i: number) => (
                                         <Paper
                                             key={i}
                                             elevation={1}
                                             sx={{
                                                 p: 1,
-                                                border: "2px solid yellow",
+                                                border: "2px solid #c8ab37ff",
                                                 borderRadius: 1,
                                                 bgcolor: "#0d1117",
                                                 minWidth: "60px",
                                                 textAlign: "center",
-                                                color: 'white'
+                                                color: '#c8ab37ff'
                                             }}
                                         >
                                             <Typography>{ts}s</Typography>
