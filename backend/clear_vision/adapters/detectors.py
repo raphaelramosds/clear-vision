@@ -4,24 +4,23 @@ import typing as t
 
 import numpy as np
 
+from clear_vision.config.logger import get_logger
 from clear_vision.domain.value_objects import TargetDetection
 from clear_vision.adapters.models import LlavaInterleaveQwenModel
 from clear_vision.domain.value_objects import VideoFrame
 from clear_vision.interfaces.detectors import GeneralTargetDetectorInterface
 from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 
-
+logger = get_logger(__name__)
 
 class LlavaTargetDetector(GeneralTargetDetectorInterface):
-
     DETECTOR_ASSISTANT_PROMPT = """
-Analyze the image and search for this target object: "{target}".
-Then, return ONLY JSON in the following format:
-{{"target_exists": boolean, "description": string}}
-Where:
-- "description": must describe ALL visible objects in the image.
-- "target_exists": must be true if the target object is present. Otherwise, it must be false.
-"""
+    Analyze the image and search for this target object: "{target}".
+    Then, return ONLY JSON in the following format:
+    {{"exists": boolean}}
+    Where:
+    - "exists": must be True if the target object is present. Otherwise, it must be False.
+    """
 
     def __init__(self, frame_sampler: FrameSamplerInterface):
         self._chatbot_model = LlavaInterleaveQwenModel()
@@ -33,13 +32,12 @@ Where:
         return detections
 
     def _get_detections(self, video_frames: t.List[VideoFrame], target: str) -> t.List[TargetDetection]:
-        def get_detection(video_frame: VideoFrame):
+        def get_detection(video_frame: VideoFrame) -> TargetDetection:
             response = self._run_detection(frame=video_frame.data, target=target)
             parsed = self._parse_model_response(model_response=response)
             return TargetDetection(
                 ts=video_frame.ts,
-                target_exists=parsed["target_exists"],
-                description=parsed["description"],
+                target_exists=parsed["exists"],
             )
 
         return [
@@ -64,11 +62,13 @@ Where:
             output[0], skip_special_tokens=True
         )
 
+        # logger.info(model_response)
+
         return model_response
 
     def _parse_model_response(self, model_response: str) -> dict:
         match = re.search(r"(?<=assistant\n)\{[\s\S]*\}", model_response)
         if not match:
-            return {"target_exists": False, "description": None}
+            return {"exists": False}
 
         return json.loads(match.group(0))

@@ -4,6 +4,7 @@ import uuid
 from pydantic import BaseModel, ConfigDict, Field
 
 from clear_vision.domain.value_objects import TargetDetection, VideoFrame
+from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 
 
 class Entity(BaseModel):

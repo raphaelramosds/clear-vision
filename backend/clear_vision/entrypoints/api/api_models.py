@@ -18,3 +18,6 @@ class GetVideosResponse(BaseResponse):
 
 class AddInferenceResponse(BaseResponse):
     content: Inference
+
+class GetVideoInferencesResponse(BaseResponse):
+    content: t.List[Inference]

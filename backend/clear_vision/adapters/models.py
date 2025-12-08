@@ -2,7 +2,7 @@ import torch
 import os
 
 from transformers import (
-    # BitsAndBytesConfig,
+    BitsAndBytesConfig,
     LlavaForConditionalGeneration,
     LlavaProcessor,
 )
@@ -25,11 +25,11 @@ class LlavaInterleaveQwenModel(HFChatbotModelInterface):
         self.processor = self._load_processor()
 
     def _load_model(self) -> LlavaForConditionalGeneration:
-        # quant = BitsAndBytesConfig(
-        #     load_in_4bit=True,
-        #     bnb_4bit_quant_type="nf4",
-        #     bnb_4bit_compute_dtype=torch.float16,
-        # )
+        quant = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.float16,
+        )
 
         model = LlavaForConditionalGeneration.from_pretrained(
             pretrained_model_name_or_path=self.local_model_path,
@@ -41,7 +41,7 @@ class LlavaInterleaveQwenModel(HFChatbotModelInterface):
             device_map="auto",
 
             dtype=torch.float16,
-            # quantization_config=quant,
+            quantization_config=quant,
             # low_cpu_mem_usage=False,
             # trust_remote_code=True  
         )

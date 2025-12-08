@@ -1,6 +1,6 @@
 import typing as t
 import numpy as np
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
 from decimal import Decimal
 
 
@@ -19,9 +19,10 @@ class ValueObject(BaseModel):
 class TargetDetection(ValueObject):
     ts: Decimal
     target_exists: bool
-    description: t.Optional[str] = None
 
 
 class VideoFrame(ValueObject):
-    data: np.ndarray
     ts: Decimal
+    data: np.ndarray
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)

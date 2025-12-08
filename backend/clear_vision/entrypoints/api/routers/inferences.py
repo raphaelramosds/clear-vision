@@ -1,17 +1,15 @@
-import typing as t
 import asyncio
 
 from fastapi import APIRouter, Depends, Response
 from dependency_injector.wiring import inject, Provide
 from clear_vision.config.logger import get_logger
-from clear_vision.domain.services import InferenceService, VideoService
+from clear_vision.domain.services import InferenceService
 from clear_vision.entrypoints.api.api_models import AddInferenceResponse, BaseResponse
 from clear_vision.interfaces.repositories import (
     InferenceRepositoryInterface,
     VideoRepositoryInterface,
 )
 from clear_vision.interfaces.detectors import GeneralTargetDetectorInterface
-from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 
 inference_router = APIRouter(prefix="/clear-vision/v1")
 
