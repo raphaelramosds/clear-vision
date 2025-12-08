@@ -22,17 +22,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       minHeight="100vh"
       display="flex"
       flexDirection="column"
+      width="100%"
     >
       <Box
+        width="100%"
         display="flex"
         justifyContent="center"
         alignItems="center"
         gap={6}
-        p={1}
+        py={1.5}
         sx={{
           background: "linear-gradient(135deg, #0d1117 0%, #0b1720 80%)",
-          borderRadius: 1,
-          boxShadow: "0 0 20px rgba(0,0,0,0.45)",
+          // boxShadow: "0 0 20px rgba(0,0,0,0.45)",
           position: "sticky",
           top: 0,
           zIndex: 10,
@@ -93,7 +94,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </IconButton>
       </Box>
 
-      <Box flex={1} p={10} mx="auto" minWidth={900} sx={{ color: "#9ea6ac" }}>
+      <Box flex={1} p={10} mx="auto" minWidth={900} maxWidth={800} sx={{ color: "#9ea6ac" }}>
         {children}
       </Box>
     </Box>

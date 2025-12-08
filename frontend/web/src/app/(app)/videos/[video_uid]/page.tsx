@@ -25,6 +25,7 @@ export default function Video({ params }: { params: { video_uid: string } }) {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState("");
+    const [inferences, setInferences] = useState<any[]>([]);
 
 
     useEffect(() => {
@@ -33,9 +34,13 @@ export default function Video({ params }: { params: { video_uid: string } }) {
             setVideo(response.content);
         };
 
-        loadVideo();
+        const loadInferences = async () => {
+            const response = await videosGateway.getVideoInferences(video_uid);
+            setInferences(response.content || []);
+        };
 
-        console.log(video)
+        loadVideo();
+        loadInferences();
     }, [video_uid]);
 
     const inferencesGateway = new InferencesGatewayHttp();
@@ -151,23 +156,62 @@ export default function Video({ params }: { params: { video_uid: string } }) {
                     </Typography>
                 )}
 
-                {result && (
-                    <Paper
+                {inferences.length > 0 && (
+                    <Stack
+                        // maxWidth={700}
+                        spacing={3}
                         sx={{
-                            mt: 3,
-                            p: 2,
-                            bgcolor: "#161b22",
-                            color: "#e6edf3",
-                            border: "1px solid #30363d",
+                            mt: 4,
                         }}
                     >
-                        <Typography variant="subtitle1" fontWeight={500}>
-                            Inferência criada com sucesso:
-                        </Typography>
-                        <pre style={{ marginTop: 8, fontSize: 14 }}>
-                            {JSON.stringify(result, null, 2)}
-                        </pre>
-                    </Paper>
+                        {inferences.map((inference) => (
+                            <Paper
+                                key={inference.uid}
+                                elevation={3}
+                                sx={{
+                                    p: 2,
+                                    bgcolor: "#161b22",
+                                    border: "1px solid #30363d",
+                                    color: "#e6edf3",
+                                    overflow: "auto",
+                                    "&::-webkit-scrollbar": {
+                                        height: "8px",
+                                    },
+                                    "&::-webkit-scrollbar-thumb": {
+                                        backgroundColor: "#30363d",
+                                        borderRadius: "4px",
+                                    },
+                                    "&::-webkit-scrollbar-track": {
+                                        backgroundColor: "#161b22",
+                                    },
+                                }}
+                            >
+                                <Typography variant="h6" sx={{ mb: 2 }}>
+                                    {inference.target}
+                                </Typography>
+
+                                <Stack direction="row">
+                                    {inference.timestamps.map((ts: string, i: number) => (
+                                        <Paper
+                                            key={i}
+                                            elevation={1}
+                                            sx={{
+                                                p: 1,
+                                                border: "2px solid yellow",
+                                                borderRadius: 1,
+                                                bgcolor: "#0d1117",
+                                                minWidth: "60px",
+                                                textAlign: "center",
+                                                color: 'white'
+                                            }}
+                                        >
+                                            <Typography>{ts}s</Typography>
+                                        </Paper>
+                                    ))}
+                                </Stack>
+                            </Paper>
+                        ))}
+                    </Stack>
                 )}
             </Paper>
         </>
