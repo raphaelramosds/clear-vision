@@ -13,6 +13,7 @@ from clear_vision.interfaces.frame_samplers import FrameSamplerInterface
 
 logger = get_logger(__name__)
 
+
 class LlavaTargetDetector(GeneralTargetDetectorInterface):
     DETECTOR_ASSISTANT_PROMPT = """
     Analyze the image and search for this target object: "{target}".
@@ -31,7 +32,9 @@ class LlavaTargetDetector(GeneralTargetDetectorInterface):
         detections = self._get_detections(video_frames=samples, target=target)
         return detections
 
-    def _get_detections(self, video_frames: t.List[VideoFrame], target: str) -> t.List[TargetDetection]:
+    def _get_detections(
+        self, video_frames: t.List[VideoFrame], target: str
+    ) -> t.List[TargetDetection]:
         def get_detection(video_frame: VideoFrame) -> TargetDetection:
             response = self._run_detection(frame=video_frame.data, target=target)
             parsed = self._parse_model_response(model_response=response)
@@ -40,10 +43,7 @@ class LlavaTargetDetector(GeneralTargetDetectorInterface):
                 target_exists=parsed["exists"],
             )
 
-        return [
-            get_detection(video_frame=video_frame)
-            for video_frame in video_frames
-        ]
+        return [get_detection(video_frame=video_frame) for video_frame in video_frames]
 
     def _run_detection(self, frame: np.ndarray, target: str) -> str:
         prompt = self._chatbot_model.build_prompt_with_image(
@@ -62,13 +62,14 @@ class LlavaTargetDetector(GeneralTargetDetectorInterface):
             output[0], skip_special_tokens=True
         )
 
-        # logger.info(model_response)
-
         return model_response
 
     def _parse_model_response(self, model_response: str) -> dict:
-        match = re.search(r"(?<=assistant\n)\{[\s\S]*\}", model_response)
-        if not match:
-            return {"exists": False}
-
-        return json.loads(match.group(0))
+        response = {"exists": False}
+        try:
+            match = re.search(r"(?<=assistant\n)\{[\s\S]*\}", model_response)
+            if match:
+                response = json.loads(match.group(0))
+        except Exception as e:
+            logger.error(e)
+        return response
