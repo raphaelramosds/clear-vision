@@ -1,0 +1,46 @@
+{
+  "video_processor": {
+    "model": {
+      "path": "models/yolov8n.onnx",
+      "type": "onnx",
+      "class_names": "models/coco.names"
+    },
+    "detection": {
+      "confidence_threshold": 0.5,
+      "nms_threshold": 0.4,
+      "input_width": 640,
+      "input_height": 640
+    },
+    "processing": {
+      "frame_skip": 1,
+      "use_gpu": true,
+      "max_batch_size": 1
+    },
+    "output": {
+      "format": "mp4",
+      "codec": "h264",
+      "fps": "source",
+      "resolution": "source",
+      "save_video": true,
+      "save_json": false
+    },
+    "examples": [
+      {
+        "name": "Real-time Detection",
+        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -o output.mp4"
+      },
+      {
+        "name": "Fast Processing (Every 5th Frame)",
+        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -s 5 -o output.mp4"
+      },
+      {
+        "name": "Export to JSON",
+        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -j detections.json"
+      },
+      {
+        "name": "Strict Detection (High Confidence)",
+        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -t 0.8 -o output.mp4"
+      }
+    ]
+  }
+}

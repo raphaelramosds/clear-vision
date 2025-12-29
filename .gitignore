@@ -1,4 +1,15 @@
 **/__pycache__
 **/.vscode
-.idea
+**/build
+
 .env
+
+# Videos
+*.mp4
+*.avi
+
+# Models
+*.onnx
+
+# IDEs
+.idea
