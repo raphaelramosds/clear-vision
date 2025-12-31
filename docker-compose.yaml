@@ -1,7 +1,7 @@
 services:
   # NOTE. I AM TOO LAZY TO SETUP A DOCKERFILE WITH CUDA SUPPORT FOR FAST DETECTIONS RESPONSES. SO RUN THIS SHIT LOCALLY: 
   #
-  #   cd backend
+  #   cd core
   #   DYNAMODB_ENDPOINT_URL="http://0.0.0.0:8000" uvicorn clear_vision.entrypoints.api.main:app --host 0.0.0.0 --port 4000 --reload
   #
   # ONCE THIS SETUP IS DONE, UNCOMMENT THIS SERVICE:
@@ -9,13 +9,13 @@ services:
   # api:
   #   image: raphael/clear-vision-api:local
   #   build:
-  #     context: ./backend
+  #     context: ./core
   #   ports:
   #     - "4000:4000"
   #   volumes:
-  #     - "./backend/poetry.lock:/app/poetry.lock"
-  #     - "./backend/pyproject.toml:/app/pyproject.toml"
-  #     - "./backend/clear_vision:/app/clear_vision"
+  #     - "./core/poetry.lock:/app/poetry.lock"
+  #     - "./core/pyproject.toml:/app/pyproject.toml"
+  #     - "./core/clear_vision:/app/clear_vision"
   #   # env_file: .env
   #   entrypoint:
   #     - /bin/sh
@@ -42,18 +42,20 @@ services:
   #         # cpus: 2
   #         memory: "6G" # At least 6 gigs reserved
 
-  frontend:
-    image: raphael/clear-vision-frontend:local
+  ui:
+    image: raphael/clear-vision-ui:local
     build:
-      dockerfile: Dev.dockerfile
-      context: ./frontend
+      dockerfile: Dockerfile
+      context: ./ui
     ports:
-      - "3000:3000"
-    env_file: ./frontend/.env
+      - "8501:8501"
+    env_file: ./ui/.env
     volumes:
-      - ./frontend/package.json:/app/package.json
-      - ./frontend/package-lock.json:/app/package-lock.json
-      - ./frontend/web:/app/web
+      - ./ui/requirements.txt:/app/requirements.txt
+      - ./ui/app.py:/app/app.py
+      - ./ui/pages:/app/pages
+      - ./ui/components:/app/components
+      - ./ui/infra:/app/infra
 
   # ollama-server:
   #   image: raphael/clear-vision-ollama-server:local
@@ -73,7 +75,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - "./backend/clear_vision/infra/dynamodb/data:/home/dynamodblocal/data"
+      - "./core/clear_vision/infra/dynamodb/data:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
     healthcheck:
       test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
@@ -88,7 +90,7 @@ services:
     ports:
       - "8005:8000"
     volumes:
-      - "./backend/tests/adapters/repositories/data:/home/dynamodblocal/data"
+      - "./core/tests/adapters/repositories/data:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
     healthcheck:
       test: [ "CMD-SHELL", "curl -s http://localhost:8000 || exit 1" ]
