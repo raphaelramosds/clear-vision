@@ -36,9 +36,15 @@ bool YOLODetector::loadModel(const std::string& modelPath,
             return false;
         }
 
-        // Use GPU if available, otherwise CPU
-        net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
-        net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
+        // FIXME CMAKE IS NOT INCLUDING CUDA ON BUILD PROCESS EVEN WITH THE FLAGS ENABLED
+
+        // net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
+        // net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
+
+        net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+        net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+
+        // std::cout << cv::getBuildInformation() << std::endl;
 
         std::cout << "YOLO model loaded successfully" << std::endl;
         return true;
