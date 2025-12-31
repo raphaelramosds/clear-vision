@@ -27,19 +27,19 @@
     "examples": [
       {
         "name": "Real-time Detection",
-        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -o output.mp4"
+        "command": "./DetectModule input.mp4 -m models/yolov8n.onnx -n models/coco.names -o output.mp4"
       },
       {
         "name": "Fast Processing (Every 5th Frame)",
-        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -s 5 -o output.mp4"
+        "command": "./DetectModule input.mp4 -m models/yolov8n.onnx -n models/coco.names -s 5 -o output.mp4"
       },
       {
         "name": "Export to JSON",
-        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -j detections.json"
+        "command": "./DetectModule input.mp4 -m models/yolov8n.onnx -n models/coco.names -j detections.json"
       },
       {
         "name": "Strict Detection (High Confidence)",
-        "command": "./video-processor input.mp4 -m models/yolov8n.onnx -n models/coco.names -t 0.8 -o output.mp4"
+        "command": "./DetectModule input.mp4 -m models/yolov8n.onnx -n models/coco.names -t 0.8 -o output.mp4"
       }
     ]
   }

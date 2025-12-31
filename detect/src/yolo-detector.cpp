@@ -1,4 +1,4 @@
-#include "include/yolo-detector.hpp"
+#include "../include/yolo-detector.hpp"
 #include <iostream>
 #include <fstream>
 #include <iomanip>

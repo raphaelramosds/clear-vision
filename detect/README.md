@@ -111,11 +111,11 @@ yolo export model=yolov8n.pt format=onnx opset=12
 
 ## Debug
 
-Task to build the project in debug mode
+Create the following files in the `.vscode` folder at the root of the project to enable building and debugging the detection model in VSCode.
+
+- `tasks.json`: task to build the project in debug mode
 
 ```json
-// tasks.json
-
 {
     "version": "2.0.0",
     "tasks": [
@@ -145,8 +145,8 @@ Task to build the project in debug mode
 
 Configuration to debug the video-processor application with specific arguments
 
+- `launch.json`
 ```json
-// launch.json
 {
     "version": "0.2.0",
     "configurations": [
@@ -169,5 +169,26 @@ Configuration to debug the video-processor application with specific arguments
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]
+}
+```
+
+- `c_cpp_properties.json`: include paths for IntelliSense
+```json
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/include/opencv4"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
 }
 ```

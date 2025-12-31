@@ -17,13 +17,13 @@ else()
     message(WARNING "OpenCV WITHOUT CUDA SUPPORT FOUND")
 endif()
 
-add_executable(video-processor 
-    main.cpp
-    yolo-detector.cpp
-    video-processor.cpp
+add_executable(DetectModule 
+    src/detect.cpp
+    src/yolo-detector.cpp
+    src/video-processor.cpp
 )
 
-target_include_directories(video-processor PRIVATE ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(video-processor PRIVATE ${OpenCV_LIBRARIES})
+target_include_directories(DetectModule PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(DetectModule PRIVATE ${OpenCV_LIBRARIES})
 
-install(TARGETS video-processor DESTINATION bin)
+install(TARGETS DetectModule DESTINATION bin)
