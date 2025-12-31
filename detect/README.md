@@ -32,7 +32,10 @@ sudo apt-get -y install cudnn9-cuda-12 libcudnn9-dev-cuda-12
 # To install for CUDA 13, perform the above configuration but install the CUDA 13 specific package:
 sudo apt-get -y install cudnn9-cuda-13
 
+# Check installation
+sudo find /usr -name cudnn.h
 ```
+
 OpenCV is required to build and run the detection model. Follow the instructions below to download and compile OpenCV on your system.
 
 - CUDA_CUDART_LIBRARY can be found with the command `find /usr -name "libcudart.so"`.
@@ -52,8 +55,18 @@ echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig'
 # Reload .zshrc
 source ~/.zshrc
 
-# Create build directory
-mkdir build && cd build
+# Get opencv sources
+sudo apt update
+
+sudo apt install build-essential cmake git libgtk-3-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev openexr libatlas-base-dev libopenexr-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev python3-dev python3-numpy libtbbmalloc2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-dev gfortran -y
+
+mkdir ~/opencv_build && cd ~/opencv_build
+
+git clone https://github.com/opencv/opencv.git
+
+git clone https://github.com/opencv/opencv_contrib.git
+
+mkdir -p ~/opencv_build/opencv/build && cd ~/opencv_build/opencv/build
 
 # Build
 cmake -D CMAKE_BUILD_TYPE=RELEASE \
