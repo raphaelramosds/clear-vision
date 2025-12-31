@@ -38,6 +38,8 @@ sudo find /usr -name cudnn.h
 
 OpenCV is required to build and run the detection model. Follow the instructions below to download and compile OpenCV on your system.
 
+Beforehand, note the following paths that will be used in the cmake command to build OpenCV with CUDA support
+
 - CUDA_CUDART_LIBRARY can be found with the command `find /usr -name "libcudart.so"`.
 - CUDA_INCLUDE_DIRS is usually `/usr/include`.
 - CUDA_TOOLKIT_ROOT_DIR is usually `/usr`.
