@@ -153,22 +153,31 @@ Configuration to debug the video-processor application with specific arguments
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug video-processor",
+            "name": "Debug DetectModule",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/detect/build/video-processor",
+            "program": "${workspaceFolder}/detect/build/DetectModule",
             "args": [
                 "${workspaceFolder}/detect/video_rua01.mp4",
                 "-m",
                 "${workspaceFolder}/detect/yolov8n.onnx",
                 "-n",
                 "${workspaceFolder}/detect/coco.names",
+                "-t",
+                "0.2",
                 "-o",
                 "${workspaceFolder}/detect/output.mp4"
             ],
             "cwd": "${workspaceFolder}/detect",
             "preLaunchTask": "build-detect",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }
