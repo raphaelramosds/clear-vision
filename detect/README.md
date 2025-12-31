@@ -2,7 +2,7 @@
 
 This folder contains the code and resources related to the detection model used in the Clear Vision project. The detection model is responsible for identifying and localizing objects within images or video frames.
 
-## Download and compile OpenCV
+## Download and compile OpenCV with CUDA support
 
 CUDA 12 or higher is required to build OpenCV with GPU support. However, GCC version 12 is required to compile CUDA 12 code. Install GCC-12 and G++-12 on your system with the following commands
 
@@ -40,6 +40,18 @@ OpenCV is required to build and run the detection model. Follow the instructions
 - CUDA_TOOLKIT_ROOT_DIR is usually `/usr`.
 
 ```bash
+
+# On WSL2, the communication between the Linux guest and the Windows host GPU happens through libraries located in 
+# /usr/lib/wsl/lib
+# Therefore you must add this path to your LD_LIBRARY_PATH environment variable
+echo 'export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH' >> ~/.zshrc
+
+# Add pkgconfig path
+echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig'
+
+# Reload .zshrc
+source ~/.zshrc
+
 # Create build directory
 mkdir build && cd build
 

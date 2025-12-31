@@ -36,15 +36,18 @@ bool YOLODetector::loadModel(const std::string& modelPath,
             return false;
         }
 
-        // FIXME CMAKE IS NOT INCLUDING CUDA ON BUILD PROCESS EVEN WITH THE FLAGS ENABLED
-
-        // net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
-        // net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
-
-        net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-        net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
-
-        // std::cout << cv::getBuildInformation() << std::endl;
+        // Try to enable CUDA acceleration with fallback to CPU
+        bool cudaSuccess = false;
+        try {
+            net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
+            net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA_FP16);
+            std::cout << "Using CUDA backend/target for YOLO inference" << std::endl;
+            cudaSuccess = true;
+        } catch (const std::exception& e) {
+            std::cerr << "CUDA backend failed (" << e.what() << ") - falling back to CPU" << std::endl;
+            net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+            net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+        }
 
         std::cout << "YOLO model loaded successfully" << std::endl;
         return true;
