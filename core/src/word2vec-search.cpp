@@ -8,7 +8,6 @@
 
 Word2VecSearch::Word2VecSearch(const std::string& json_path) {
     load_json(json_path);
-    init_synonyms();
 }
 
 void Word2VecSearch::load_json(const std:: string& json_path) {
@@ -43,19 +42,6 @@ void Word2VecSearch::load_json(const std:: string& json_path) {
     class_names_ = std::vector<std::string>(unique_classes.begin(), unique_classes.end());
 }
 
-void Word2VecSearch::init_synonyms() {
-    
-    synonyms_["truck"] = {"caminhão", "caminhao", "vehicle", "veiculo", "veículo", "carga", "cargo"};
-    synonyms_["caminhão"] = {"truck", "caminhao", "vehicle", "veiculo", "veículo", "carga"};
-    synonyms_["car"] = {"carro", "automóvel", "automovel", "vehicle", "veiculo", "veículo"};
-    synonyms_["carro"] = {"car", "automóvel", "automovel", "vehicle"};
-    synonyms_["person"] = {"pessoa", "human", "humano", "pedestrian", "pedestre"};
-    synonyms_["pessoa"] = {"person", "human", "humano", "pedestrian", "pedestre"};
-    synonyms_["bus"] = {"ônibus", "onibus", "autobus", "autocarro"};
-    synonyms_["bicycle"] = {"bicicleta", "bike", "ciclista"};
-    synonyms_["motorcycle"] = {"motocicleta", "moto", "motorbike"};
-}
-
 std::vector<std::string> Word2VecSearch::tokenize(const std::string& text) {
     std::vector<std:: string> tokens;
     std:: stringstream ss(text);
@@ -74,6 +60,10 @@ std::vector<std::string> Word2VecSearch::tokenize(const std::string& text) {
     return tokens;
 }
 
+/**
+ * Solve levenshtein distance matrix and convert to similarity score
+ * Reference: https://blog.paperspace.com/measuring-text-similarity-using-levenshtein-distance/
+ */
 float Word2VecSearch::levenshtein_similarity(const std::string& a, const std:: string& b) {
     std::vector<std::vector<int>> dp(a.size() + 1, std::vector<int>(b.size() + 1));
     
@@ -102,24 +92,16 @@ float Word2VecSearch::calculate_similarity(const std::string& query,
     
     float max_similarity = 0.0f;
     
+    // Compare each token in query with each token in class name and get the one with max similarity
     for (const auto& q_token : query_tokens) {
         for (const auto& c_token : class_tokens) {
-            // Exact match
+            // EXACT match
             if (q_token == c_token) {
                 max_similarity = std::max(max_similarity, 1.0f);
                 continue;
             }
-            
-            // Check if token match any synonyms
-            if (synonyms_.count(q_token)) {
-                for (const auto& synonym : synonyms_[q_token]) {
-                    if (synonym == c_token) {
-                        max_similarity = std::max(max_similarity, 0.9f);
-                    }
-                }
-            }
-            
-            // Apply Levenshtein similarity
+                       
+            // APPROXIMATE match: Levenshtein similarity
             float lev_sim = levenshtein_similarity(q_token, c_token);
             max_similarity = std::max(max_similarity, lev_sim * 0.7f);
         }
