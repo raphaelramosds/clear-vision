@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
         // Query a object and save results
         Word2VecSearch w2vSearch("output.json");
-        std::vector<SearchResult> results = w2vSearch.search("a traffic light", 0.3f);
+        std::vector<SearchResult> results = w2vSearch.search("a dog", 0.3f);
         w2vSearch.toJson("search_results.json", results);
     }
     else {

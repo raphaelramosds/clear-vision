@@ -138,7 +138,7 @@ Create the following files in the `.vscode` folder at the root of the project to
         {
             "label": "build-detect",
             "type": "shell",
-            "command": "cd ${workspaceFolder}/detect && cmake -DCMAKE_BUILD_TYPE=Debug -B build && cmake --build build",
+            "command": "cd ${workspaceFolder}/core && cmake -DCMAKE_BUILD_TYPE=Debug -B build && cmake --build build",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -151,7 +151,7 @@ Create the following files in the `.vscode` folder at the root of the project to
         {
             "label": "clean-detect",
             "type": "shell",
-            "command": "rm -rf ${workspaceFolder}/detect/build",
+            "command": "rm -rf ${workspaceFolder}/core/build",
             "detail": "Clean build artifacts"
         }
     ]
@@ -170,19 +170,19 @@ Configuration to debug the video-processor application with specific arguments
             "name": "Debug DetectModule",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/detect/build/DetectModule",
+            "program": "${workspaceFolder}/core/build/DetectModule",
             "args": [
-                "${workspaceFolder}/detect/video_rua01.mp4",
+                "${workspaceFolder}/core/video_rua01.mp4",
                 "-m",
-                "${workspaceFolder}/detect/yolov8n.onnx",
+                "${workspaceFolder}/core/yolov8n.onnx",
                 "-n",
-                "${workspaceFolder}/detect/coco.names",
+                "${workspaceFolder}/core/coco.names",
                 "-t",
                 "0.2",
                 "-o",
-                "${workspaceFolder}/detect/output.mp4"
+                "${workspaceFolder}/core/output.mp4"
             ],
-            "cwd": "${workspaceFolder}/detect",
+            "cwd": "${workspaceFolder}/core",
             "preLaunchTask": "build-detect",
             "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
