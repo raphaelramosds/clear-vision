@@ -40,11 +40,7 @@ private:
     std::vector<Frame> data_;
     std::vector<std::string> class_names_;
 
-    // Dicionário de sinônimos/palavras relacionadas
-    std::unordered_map<std::string, std::vector<std::string>> synonyms_;
-
     void load_json(const std::string &json_path);
-    void init_synonyms();
     float calculate_similarity(const std::string &query, const std::string &class_name);
     std::vector<std::string> tokenize(const std::string &text);
     float levenshtein_similarity(const std::string &a, const std::string &b);
