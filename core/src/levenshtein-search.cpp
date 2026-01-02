@@ -1,4 +1,4 @@
-#include "../include/word2vec-search.hpp"
+#include "../include/levenshtein-search.hpp"
 
 #include <fstream>
 #include <algorithm>
@@ -6,11 +6,11 @@
 #include <sstream>
 #include <set>
 
-Word2VecSearch::Word2VecSearch(const std::string& json_path) {
+LevenshteinSearch::LevenshteinSearch(const std::string& json_path) {
     load_json(json_path);
 }
 
-void Word2VecSearch::load_json(const std:: string& json_path) {
+void LevenshteinSearch::load_json(const std:: string& json_path) {
     std::ifstream file(json_path);
     json j;
     file >> j;
@@ -42,7 +42,7 @@ void Word2VecSearch::load_json(const std:: string& json_path) {
     class_names_ = std::vector<std::string>(unique_classes.begin(), unique_classes.end());
 }
 
-std::vector<std::string> Word2VecSearch::tokenize(const std::string& text) {
+std::vector<std::string> LevenshteinSearch::tokenize(const std::string& text) {
     std::vector<std:: string> tokens;
     std:: stringstream ss(text);
     std::string token;
@@ -64,7 +64,7 @@ std::vector<std::string> Word2VecSearch::tokenize(const std::string& text) {
  * Solve levenshtein distance matrix and convert to similarity score
  * Reference: https://blog.paperspace.com/measuring-text-similarity-using-levenshtein-distance/
  */
-float Word2VecSearch::levenshtein_similarity(const std::string& a, const std:: string& b) {
+float LevenshteinSearch::levenshtein_similarity(const std::string& a, const std:: string& b) {
     std::vector<std::vector<int>> dp(a.size() + 1, std::vector<int>(b.size() + 1));
     
     for (size_t i = 0; i <= a.size(); ++i) dp[i][0] = i;
@@ -85,7 +85,7 @@ float Word2VecSearch::levenshtein_similarity(const std::string& a, const std:: s
     return 1.0f - (static_cast<float>(distance) / max_len);
 }
 
-float Word2VecSearch::calculate_similarity(const std::string& query, 
+float LevenshteinSearch::calculate_similarity(const std::string& query, 
                                                   const std::string& class_name) {
     auto query_tokens = tokenize(query);
     auto class_tokens = tokenize(class_name);
@@ -110,7 +110,7 @@ float Word2VecSearch::calculate_similarity(const std::string& query,
     return max_similarity;
 }
 
-std::vector<SearchResult> Word2VecSearch::search(const std::string& query, 
+std::vector<SearchResult> LevenshteinSearch::search(const std::string& query, 
                                                         float min_similarity) {
     std::vector<SearchResult> results;
     
@@ -132,7 +132,7 @@ std::vector<SearchResult> Word2VecSearch::search(const std::string& query,
     return results;
 }
 
-void Word2VecSearch::toJson(const std::string &output_path, const std::vector<SearchResult> &results)
+void LevenshteinSearch::toJson(const std::string &output_path, const std::vector<SearchResult> &results)
 {
     std::ofstream resultsFile(output_path);
     resultsFile << "[\n";

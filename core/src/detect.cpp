@@ -1,5 +1,5 @@
 #include "../include/video-processor.hpp"
-#include "../include/word2vec-search.hpp"
+#include "../include/levenshtein-search.hpp"
 #include "../include/cli.hpp"
 
 #include <iostream>
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         }
 
         // Query a object and save results
-        Word2VecSearch w2vSearch("output.json");
+        LevenshteinSearch w2vSearch("output.json");
         std::vector<SearchResult> results = w2vSearch.search("a truck", 0.3f);
         w2vSearch.toJson("search_results.json", results);
     }

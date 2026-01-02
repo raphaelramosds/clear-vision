@@ -27,10 +27,10 @@ struct SearchResult
     float similarity_score;
 };
 
-class Word2VecSearch
+class LevenshteinSearch
 {
 public:
-    Word2VecSearch(const std::string &json_path);
+    LevenshteinSearch(const std::string &json_path);
 
     std::vector<SearchResult> search(const std::string &query, float min_similarity = 0.3f);
 

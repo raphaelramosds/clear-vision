@@ -27,7 +27,7 @@ add_executable(DetectModule
     src/detect.cpp
     src/yolo-detector.cpp
     src/video-processor.cpp
-    src/word2vec-search.cpp
+    src/levenshtein-search.cpp
 )
 
 # THEN configure it
