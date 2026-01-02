@@ -1,28 +1,42 @@
-FROM python:3.12-slim AS base
+FROM ubuntu:22.04
 
-ARG APP_DIR="/app"
-WORKDIR ${APP_DIR}
-
-ENV PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1 \
-    libglib2.0-0 \
-    gcc \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    libopencv-dev \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml poetry.lock ./
+# Optional: Install CUDA for GPU support
+# Uncomment the following lines if you want GPU support
+# RUN apt-get install -y nvidia-cuda-toolkit
 
-RUN pip install --no-cache-dir poetry==2.1.4
+WORKDIR /app
 
-RUN poetry config virtualenvs.create false \
-    && poetry install --without dev --no-interaction
+# Copy the video processor code
+COPY . .
 
-RUN pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
+# Build the application
+RUN mkdir -p build && \
+    cd build && \
+    cmake .. && \
+    make
 
-COPY clear_vision ./clear_vision
+# Create models directory
+RUN mkdir -p models
 
-EXPOSE 4000
+# Download YOLO model and class names
+RUN wget -q https://raw.githubusercontent.com/ultralytics/yolov5/master/data/coco.names -O models/coco.names && \
+    wget -q https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.onnx -O models/yolov8n.onnx
 
-CMD ["uvicorn", "clear_vision.entrypoints.api.main:app", "--host", "0.0.0.0", "--port", "4000"]
+# Set working directory for processing
+WORKDIR /workspace
+
+# Entry point
+ENTRYPOINT ["/app/build/video-processor"]
+CMD ["--help"]
