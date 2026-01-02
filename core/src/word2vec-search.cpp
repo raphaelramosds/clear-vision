@@ -62,9 +62,9 @@ std::vector<std::string> Word2VecSearch::tokenize(const std::string& text) {
     std::string token;
     
     while (ss >> token) {
-        // Converte para minúsculas
+        // Convert to lowercase
         std::transform(token.begin(), token.end(), token.begin(), ::tolower);
-        // Remove pontuação
+        // Remove punctuation
         token.erase(std::remove_if(token.begin(), token.end(), ::ispunct), token.end());
         if (!token.empty()) {
             tokens.push_back(token);
@@ -104,13 +104,13 @@ float Word2VecSearch::calculate_similarity(const std::string& query,
     
     for (const auto& q_token : query_tokens) {
         for (const auto& c_token : class_tokens) {
-            // Similaridade exata
+            // Exact match
             if (q_token == c_token) {
                 max_similarity = std::max(max_similarity, 1.0f);
                 continue;
             }
             
-            // Verifica sinônimos
+            // Check if token match any synonyms
             if (synonyms_.count(q_token)) {
                 for (const auto& synonym : synonyms_[q_token]) {
                     if (synonym == c_token) {
@@ -119,7 +119,7 @@ float Word2VecSearch::calculate_similarity(const std::string& query,
                 }
             }
             
-            // Similaridade de Levenshtein
+            // Apply Levenshtein similarity
             float lev_sim = levenshtein_similarity(q_token, c_token);
             max_similarity = std::max(max_similarity, lev_sim * 0.7f);
         }
