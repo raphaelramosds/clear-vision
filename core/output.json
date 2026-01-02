@@ -4,6 +4,7 @@
     "detections": [
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "truck",
         "confidence": 0.891113,
         "x": 854,
@@ -13,6 +14,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "car",
         "confidence": 0.867676,
         "x": 59,
@@ -22,6 +24,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "person",
         "confidence": 0.791992,
         "x": 714,
@@ -31,6 +34,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "traffic light",
         "confidence": 0.757812,
         "x": 607,
@@ -40,6 +44,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "car",
         "confidence": 0.737305,
         "x": 468,
@@ -49,6 +54,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "car",
         "confidence": 0.711914,
         "x": 324,
@@ -58,6 +64,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "car",
         "confidence": 0.6875,
         "x": 609,
@@ -67,6 +74,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "car",
         "confidence": 0.651367,
         "x": 661,
@@ -76,6 +84,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "person",
         "confidence": 0.554199,
         "x": 253,
@@ -85,6 +94,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "traffic light",
         "confidence": 0.503906,
         "x": 537,
@@ -94,6 +104,7 @@
       },
       {
         "ts": 1,
+        "tsStr": "00:00:01",
         "class_name": "car",
         "confidence": 0.462891,
         "x": 534,
@@ -108,6 +119,7 @@
     "detections": [
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "person",
         "confidence": 0.888672,
         "x": 861,
@@ -117,6 +129,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "car",
         "confidence": 0.85498,
         "x": 0,
@@ -126,6 +139,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "person",
         "confidence": 0.80957,
         "x": 187,
@@ -135,6 +149,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "car",
         "confidence": 0.796875,
         "x": 725,
@@ -144,6 +159,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "traffic light",
         "confidence": 0.794434,
         "x": 608,
@@ -153,6 +169,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "car",
         "confidence": 0.785156,
         "x": 273,
@@ -162,6 +179,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "truck",
         "confidence": 0.776855,
         "x": 953,
@@ -171,6 +189,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "car",
         "confidence": 0.699219,
         "x": 460,
@@ -180,6 +199,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "car",
         "confidence": 0.690918,
         "x": 611,
@@ -189,6 +209,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "car",
         "confidence": 0.644043,
         "x": 668,
@@ -198,6 +219,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "car",
         "confidence": 0.515625,
         "x": 526,
@@ -207,6 +229,7 @@
       },
       {
         "ts": 2,
+        "tsStr": "00:00:02",
         "class_name": "traffic light",
         "confidence": 0.363037,
         "x": 532,
@@ -221,6 +244,7 @@
     "detections": [
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.898438,
         "x": 1148,
@@ -230,6 +254,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.890625,
         "x": 166,
@@ -239,6 +264,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.810059,
         "x": 419,
@@ -248,6 +274,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "person",
         "confidence": 0.78418,
         "x": 57,
@@ -257,6 +284,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "traffic light",
         "confidence": 0.697754,
         "x": 577,
@@ -266,6 +294,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.696289,
         "x": 719,
@@ -275,6 +304,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.663574,
         "x": 649,
@@ -284,6 +314,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.562012,
         "x": 493,
@@ -293,6 +324,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.503906,
         "x": 589,
@@ -302,6 +334,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "traffic light",
         "confidence": 0.44751,
         "x": 496,
@@ -311,6 +344,7 @@
       },
       {
         "ts": 3,
+        "tsStr": "00:00:03",
         "class_name": "car",
         "confidence": 0.216064,
         "x": 697,
@@ -325,6 +359,7 @@
     "detections": [
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "car",
         "confidence": 0.910156,
         "x": 13,
@@ -334,6 +369,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "car",
         "confidence": 0.851074,
         "x": 383,
@@ -343,6 +379,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "car",
         "confidence": 0.83252,
         "x": 735,
@@ -352,6 +389,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "traffic light",
         "confidence": 0.686035,
         "x": 558,
@@ -361,6 +399,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "car",
         "confidence": 0.680664,
         "x": 634,
@@ -370,6 +409,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "car",
         "confidence": 0.658691,
         "x": 571,
@@ -379,6 +419,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "car",
         "confidence": 0.638672,
         "x": 694,
@@ -388,6 +429,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "traffic light",
         "confidence": 0.592773,
         "x": 469,
@@ -397,6 +439,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "bicycle",
         "confidence": 0.513672,
         "x": 893,
@@ -406,6 +449,7 @@
       },
       {
         "ts": 4,
+        "tsStr": "00:00:04",
         "class_name": "car",
         "confidence": 0.412842,
         "x": 465,
@@ -420,6 +464,7 @@
     "detections": [
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "car",
         "confidence": 0.888184,
         "x": 0,
@@ -429,6 +474,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "car",
         "confidence": 0.887207,
         "x": 776,
@@ -438,6 +484,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "car",
         "confidence": 0.853516,
         "x": 365,
@@ -447,6 +494,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "traffic light",
         "confidence": 0.827637,
         "x": 553,
@@ -456,6 +504,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "car",
         "confidence": 0.810059,
         "x": 712,
@@ -465,6 +514,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "car",
         "confidence": 0.756348,
         "x": 571,
@@ -474,6 +524,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "traffic light",
         "confidence": 0.73877,
         "x": 457,
@@ -483,6 +534,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "car",
         "confidence": 0.652832,
         "x": 642,
@@ -492,6 +544,7 @@
       },
       {
         "ts": 5,
+        "tsStr": "00:00:05",
         "class_name": "car",
         "confidence": 0.544922,
         "x": 454,
@@ -506,6 +559,7 @@
     "detections": [
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "car",
         "confidence": 0.910156,
         "x": 855,
@@ -515,6 +569,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "traffic light",
         "confidence": 0.853516,
         "x": 565,
@@ -524,6 +579,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "car",
         "confidence": 0.82666,
         "x": 757,
@@ -533,6 +589,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "car",
         "confidence": 0.763672,
         "x": 358,
@@ -542,6 +599,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "traffic light",
         "confidence": 0.755371,
         "x": 461,
@@ -551,6 +609,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "car",
         "confidence": 0.747559,
         "x": 423,
@@ -560,6 +619,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "car",
         "confidence": 0.697754,
         "x": 667,
@@ -569,6 +629,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "car",
         "confidence": 0.625977,
         "x": 591,
@@ -578,6 +639,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "traffic light",
         "confidence": 0.588867,
         "x": 864,
@@ -587,6 +649,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "truck",
         "confidence": 0.494141,
         "x": 460,
@@ -596,6 +659,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "car",
         "confidence": 0.294189,
         "x": 654,
@@ -605,6 +669,7 @@
       },
       {
         "ts": 6,
+        "tsStr": "00:00:06",
         "class_name": "traffic light",
         "confidence": 0.214722,
         "x": 388,
@@ -619,6 +684,7 @@
     "detections": [
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "car",
         "confidence": 0.91748,
         "x": 872,
@@ -628,6 +694,7 @@
       },
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "traffic light",
         "confidence": 0.870605,
         "x": 556,
@@ -637,6 +704,7 @@
       },
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "car",
         "confidence": 0.786621,
         "x": 592,
@@ -646,6 +714,7 @@
       },
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "traffic light",
         "confidence": 0.781738,
         "x": 440,
@@ -655,6 +724,7 @@
       },
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "car",
         "confidence": 0.775879,
         "x": 405,
@@ -664,6 +734,7 @@
       },
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "car",
         "confidence": 0.761719,
         "x": 326,
@@ -673,6 +744,7 @@
       },
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "car",
         "confidence": 0.749023,
         "x": 678,
@@ -682,6 +754,7 @@
       },
       {
         "ts": 7,
+        "tsStr": "00:00:07",
         "class_name": "car",
         "confidence": 0.515625,
         "x": 441,
@@ -696,6 +769,7 @@
     "detections": [
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.943848,
         "x": 1043,
@@ -705,6 +779,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.864258,
         "x": 281,
@@ -714,6 +789,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "traffic light",
         "confidence": 0.819824,
         "x": 538,
@@ -723,6 +799,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "traffic light",
         "confidence": 0.776855,
         "x": 408,
@@ -732,6 +809,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.771484,
         "x": 376,
@@ -741,6 +819,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "traffic light",
         "confidence": 0.730957,
         "x": 1052,
@@ -750,6 +829,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.71582,
         "x": 687,
@@ -759,6 +839,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.710449,
         "x": 539,
@@ -768,6 +849,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.692871,
         "x": 592,
@@ -777,6 +859,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.583008,
         "x": 415,
@@ -786,6 +869,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.5,
         "x": 669,
@@ -795,6 +879,7 @@
       },
       {
         "ts": 8,
+        "tsStr": "00:00:08",
         "class_name": "car",
         "confidence": 0.221436,
         "x": 508,
@@ -809,6 +894,7 @@
     "detections": [
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.934082,
         "x": 1080,
@@ -818,6 +904,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.886719,
         "x": 213,
@@ -827,6 +914,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "traffic light",
         "confidence": 0.817871,
         "x": 356,
@@ -836,6 +924,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.786621,
         "x": 335,
@@ -845,6 +934,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.717285,
         "x": 694,
@@ -854,6 +944,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.71582,
         "x": 532,
@@ -863,6 +954,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "traffic light",
         "confidence": 0.662109,
         "x": 1119,
@@ -872,6 +964,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.635254,
         "x": 482,
@@ -881,6 +974,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.517578,
         "x": 561,
@@ -890,6 +984,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "truck",
         "confidence": 0.5,
         "x": 377,
@@ -899,6 +994,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "car",
         "confidence": 0.490479,
         "x": 588,
@@ -908,6 +1004,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "traffic light",
         "confidence": 0.243774,
         "x": 1051,
@@ -917,6 +1014,7 @@
       },
       {
         "ts": 9,
+        "tsStr": "00:00:09",
         "class_name": "traffic light",
         "confidence": 0.237915,
         "x": 49,
@@ -931,6 +1029,7 @@
     "detections": [
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "car",
         "confidence": 0.890625,
         "x": 282,
@@ -940,6 +1039,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "car",
         "confidence": 0.782715,
         "x": 847,
@@ -949,6 +1049,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "car",
         "confidence": 0.770508,
         "x": 437,
@@ -958,6 +1059,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "car",
         "confidence": 0.73584,
         "x": 722,
@@ -967,6 +1069,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "car",
         "confidence": 0.707031,
         "x": 604,
@@ -976,6 +1079,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "traffic light",
         "confidence": 0.694336,
         "x": 453,
@@ -985,6 +1089,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "truck",
         "confidence": 0.609375,
         "x": 476,
@@ -994,6 +1099,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "car",
         "confidence": 0.554199,
         "x": 665,
@@ -1003,6 +1109,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "traffic light",
         "confidence": 0.484375,
         "x": 66,
@@ -1012,6 +1119,7 @@
       },
       {
         "ts": 10,
+        "tsStr": "00:00:10",
         "class_name": "traffic light",
         "confidence": 0.205566,
         "x": 404,
@@ -1026,6 +1134,7 @@
     "detections": [
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "car",
         "confidence": 0.908691,
         "x": 654,
@@ -1035,6 +1144,7 @@
       },
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "car",
         "confidence": 0.82666,
         "x": 894,
@@ -1044,6 +1154,7 @@
       },
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "car",
         "confidence": 0.724609,
         "x": 1163,
@@ -1053,6 +1164,7 @@
       },
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "car",
         "confidence": 0.705566,
         "x": 1052,
@@ -1062,6 +1174,7 @@
       },
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "car",
         "confidence": 0.696289,
         "x": 1091,
@@ -1071,6 +1184,7 @@
       },
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "car",
         "confidence": 0.635254,
         "x": 835,
@@ -1080,6 +1194,7 @@
       },
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "traffic light",
         "confidence": 0.624512,
         "x": 411,
@@ -1089,6 +1204,7 @@
       },
       {
         "ts": 11,
+        "tsStr": "00:00:11",
         "class_name": "car",
         "confidence": 0.264404,
         "x": 1146,
@@ -1103,6 +1219,7 @@
     "detections": [
       {
         "ts": 12,
+        "tsStr": "00:00:12",
         "class_name": "car",
         "confidence": 0.831055,
         "x": 0,
@@ -1117,6 +1234,7 @@
     "detections": [
       {
         "ts": 13,
+        "tsStr": "00:00:13",
         "class_name": "car",
         "confidence": 0.95166,
         "x": 387,
@@ -1126,6 +1244,7 @@
       },
       {
         "ts": 13,
+        "tsStr": "00:00:13",
         "class_name": "car",
         "confidence": 0.944824,
         "x": 55,
@@ -1140,6 +1259,7 @@
     "detections": [
       {
         "ts": 14,
+        "tsStr": "00:00:14",
         "class_name": "car",
         "confidence": 0.871582,
         "x": 1084,
@@ -1149,6 +1269,7 @@
       },
       {
         "ts": 14,
+        "tsStr": "00:00:14",
         "class_name": "car",
         "confidence": 0.787598,
         "x": 578,
@@ -1163,6 +1284,7 @@
     "detections": [
       {
         "ts": 15,
+        "tsStr": "00:00:15",
         "class_name": "car",
         "confidence": 0.883301,
         "x": 1077,
@@ -1172,6 +1294,7 @@
       },
       {
         "ts": 15,
+        "tsStr": "00:00:15",
         "class_name": "truck",
         "confidence": 0.6875,
         "x": 751,

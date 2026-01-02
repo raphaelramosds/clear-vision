@@ -21,9 +21,9 @@ struct Frame
 
 struct SearchResult
 {
-    int ts;
+    std::string tsStr;
+    std::string className;
     int frame_number;
-    Detection detection;
     float similarity_score;
 };
 

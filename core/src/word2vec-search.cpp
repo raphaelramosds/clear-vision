@@ -26,6 +26,7 @@ void Word2VecSearch::load_json(const std:: string& json_path) {
             Detection det;
             det.ts = det_json["ts"];
             det.className = det_json["class_name"];
+            det.tsStr = det_json["tsStr"];
             det.confidence = det_json["confidence"];
             det.x = det_json["x"];
             det.y = det_json["y"];
@@ -43,7 +44,7 @@ void Word2VecSearch::load_json(const std:: string& json_path) {
 }
 
 void Word2VecSearch::init_synonyms() {
-    // Adicione sinônimos em português e inglês
+    
     synonyms_["truck"] = {"caminhão", "caminhao", "vehicle", "veiculo", "veículo", "carga", "cargo"};
     synonyms_["caminhão"] = {"truck", "caminhao", "vehicle", "veiculo", "veículo", "carga"};
     synonyms_["car"] = {"carro", "automóvel", "automovel", "vehicle", "veiculo", "veículo"};
@@ -136,7 +137,7 @@ std::vector<SearchResult> Word2VecSearch::search(const std::string& query,
             float similarity = calculate_similarity(query, detection.className);
             
             if (similarity >= min_similarity) {
-                results.push_back({detection.ts, frame.frame_number, detection, similarity});
+                results.push_back({detection.tsStr, detection.className, frame.frame_number, similarity});
             }
         }
     }
@@ -158,8 +159,8 @@ void Word2VecSearch::toJson(const std::string &output_path, const std::vector<Se
     {
         const auto &result = results[i];
         resultsFile << "  {\n";
-        resultsFile << "    \"ts\": " << result.ts << ",\n";
-        resultsFile << "    \"class_name\": \"" << result.detection.className << "\",\n";
+        resultsFile << "    \"tsStr\": \"" << result.tsStr << "\",\n";
+        resultsFile << "    \"className\": \"" << result.className << "\",\n";
         resultsFile << "    \"similarity_score\": " << result.similarity_score << "\n";
         resultsFile << "  }";
         if (i < results.size() - 1)

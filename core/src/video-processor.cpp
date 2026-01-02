@@ -137,8 +137,17 @@ bool VideoProcessor::processVideoToJSON(const std::string& jsonOutputPath) {
             for (size_t i = 0; i < detections.size(); ++i) {
                 const auto& det = detections[i];
                 u_long ts = static_cast<u_long>(totalFrames) / step;
+
+                int hours = ts / 3600;
+                int minutes = (ts % 3600) / 60;
+                int seconds = ts % 60;
+                
+                char timeBuffer[9];
+                std::snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", hours, minutes, seconds);
+
                 jsonFile << "      {\n";
                 jsonFile << "        \"ts\": " << ts << ",\n";
+                jsonFile << "        \"tsStr\": \"" << timeBuffer << "\",\n";
                 jsonFile << "        \"class_name\": \"" << det.className << "\",\n";
                 jsonFile << "        \"confidence\": " << det.confidence << ",\n";
                 jsonFile << "        \"x\": " << det.x << ",\n";

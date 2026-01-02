@@ -167,20 +167,20 @@ Configuration to debug the video-processor application with specific arguments
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug DetectModule",
+            "name": "Debug DetectModule (to JSON)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/core/build/DetectModule",
             "args": [
-                "${workspaceFolder}/core/video_rua01.mp4",
+                "${workspaceFolder}/core/video_teste02.mp4",
                 "-m",
-                "${workspaceFolder}/core/yolov8n.onnx",
+                "${workspaceFolder}/core/yolov8x.onnx",
                 "-n",
                 "${workspaceFolder}/core/coco.names",
                 "-t",
                 "0.2",
-                "-o",
-                "${workspaceFolder}/core/output.mp4"
+                "-j",
+                "${workspaceFolder}/core/output.json",
             ],
             "cwd": "${workspaceFolder}/core",
             "preLaunchTask": "build-detect",
@@ -192,7 +192,34 @@ Configuration to debug the video-processor application with specific arguments
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
+                {
+            "name": "Debug DetectModule (to MP4)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/core/build/DetectModule",
+            "args": [
+                "${workspaceFolder}/core/video_teste02.mp4",
+                "-m",
+                "${workspaceFolder}/core/yolov8x.onnx",
+                "-n",
+                "${workspaceFolder}/core/coco.names",
+                "-t",
+                "0.2",
+                "-o",
+                "${workspaceFolder}/detect/output.mp4"
+            ],
+            "cwd": "${workspaceFolder}/core",
+            "preLaunchTask": "build-detect",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }
 ```

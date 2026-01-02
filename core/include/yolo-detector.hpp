@@ -14,6 +14,7 @@ struct Detection {
     float confidence;           // Confidence score
     int classId;                 // Class ID
     std::string className;       // Class name
+    std::string tsStr;           // Timestamp as string
 };
 
 /**
