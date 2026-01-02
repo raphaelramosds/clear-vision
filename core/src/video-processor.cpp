@@ -27,7 +27,6 @@ bool VideoProcessor::processVideo() {
     double fps = cap.get(cv::CAP_PROP_FPS);
     int width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
     int height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
-    int step = frameSkip * static_cast<int>(fps);
 
     std::cout << "\nVideo Properties:" << std::endl;
     std::cout << "  Frames: " << frameCount << std::endl;
@@ -58,7 +57,7 @@ bool VideoProcessor::processVideo() {
         totalFrames++;
 
         // Process every Nth frame
-        if (totalFrames % step == 0) {
+        if (totalFrames % frameSkip == 0) {
             // Detect objects
             auto detections = detector.detectObjects(frame);
 

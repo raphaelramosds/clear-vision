@@ -172,7 +172,7 @@ Configuration to debug the video-processor application with specific arguments
             "request": "launch",
             "program": "${workspaceFolder}/core/build/DetectModule",
             "args": [
-                "${workspaceFolder}/core/video_teste02.mp4",
+                "${workspaceFolder}/core/cade_black.mp4",
                 "-m",
                 "${workspaceFolder}/core/yolov8x.onnx",
                 "-n",
@@ -207,7 +207,7 @@ Configuration to debug the video-processor application with specific arguments
                 "-t",
                 "0.2",
                 "-o",
-                "${workspaceFolder}/detect/output.mp4"
+                "${workspaceFolder}/core/output.mp4"
             ],
             "cwd": "${workspaceFolder}/core",
             "preLaunchTask": "build-detect",
