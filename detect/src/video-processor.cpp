@@ -26,6 +26,7 @@ bool VideoProcessor::processVideo() {
     double fps = cap.get(cv::CAP_PROP_FPS);
     int width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
     int height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+    int step = frameSkip * static_cast<int>(fps);
 
     std::cout << "\nVideo Properties:" << std::endl;
     std::cout << "  Frames: " << frameCount << std::endl;
@@ -56,7 +57,7 @@ bool VideoProcessor::processVideo() {
         totalFrames++;
 
         // Process every Nth frame
-        if (totalFrames % frameSkip == 0) {
+        if (totalFrames % step == 0) {
             // Detect objects
             auto detections = detector.detectObjects(frame);
 
@@ -108,6 +109,7 @@ bool VideoProcessor::processVideoToJSON(const std::string& jsonOutputPath) {
 
     int frameCount = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_COUNT));
     int totalFrames = 0;
+    int step = cap.get(cv::CAP_PROP_FPS) * 1;
 
     std::ofstream jsonFile(jsonOutputPath);
     jsonFile << "[\n";
@@ -117,40 +119,43 @@ bool VideoProcessor::processVideoToJSON(const std::string& jsonOutputPath) {
 
     while (cap.read(frame)) {
         totalFrames++;
-        auto detections = detector.detectObjects(frame);
+        
+        if (totalFrames % step == 0) {
 
-        if (!firstFrame) {
-            jsonFile << ",\n";
-        }
-        firstFrame = false;
+            auto detections = detector.detectObjects(frame);
+    
+            if (!firstFrame) {
+                jsonFile << ",\n";
+            }
+            firstFrame = false;
 
-        jsonFile << "  {\n";
-        jsonFile << "    \"frame_number\": " << totalFrames << ",\n";
-        jsonFile << "    \"detections\": [\n";
+            jsonFile << "  {\n";
+            jsonFile << "    \"frame_number\": " << totalFrames << ",\n";
+            jsonFile << "    \"detections\": [\n";
 
-        for (size_t i = 0; i < detections.size(); ++i) {
-            const auto& det = detections[i];
-            jsonFile << "      {\n";
-            jsonFile << "        \"class_name\": \"" << det.className << "\",\n";
-            jsonFile << "        \"confidence\": " << det.confidence << ",\n";
-            jsonFile << "        \"x\": " << det.x << ",\n";
-            jsonFile << "        \"y\": " << det.y << ",\n";
-            jsonFile << "        \"width\": " << det.w << ",\n";
-            jsonFile << "        \"height\": " << det.h << "\n";
-            jsonFile << "      }";
-            if (i < detections.size() - 1) jsonFile << ",";
-            jsonFile << "\n";
-        }
+            for (size_t i = 0; i < detections.size(); ++i) {
+                const auto& det = detections[i];
+                u_long ts = static_cast<u_long>(totalFrames) / step;
+                jsonFile << "      {\n";
+                jsonFile << "        \"ts\": " << ts << ",\n";
+                jsonFile << "        \"class_name\": \"" << det.className << "\",\n";
+                jsonFile << "        \"confidence\": " << det.confidence << ",\n";
+                jsonFile << "        \"x\": " << det.x << ",\n";
+                jsonFile << "        \"y\": " << det.y << ",\n";
+                jsonFile << "        \"width\": " << det.w << ",\n";
+                jsonFile << "        \"height\": " << det.h << "\n";
+                jsonFile << "      }";
+                if (i < detections.size() - 1) jsonFile << ",";
+                jsonFile << "\n";
+            }
+    
+            jsonFile << "    ]\n";
+            jsonFile << "  }";
 
-        jsonFile << "    ]\n";
-        jsonFile << "  }";
-
-        if (totalFrames % 30 == 0) {
             std::cout << "\rProcessed " << totalFrames << "/" << frameCount 
                      << " frames..." << std::flush;
         }
     }
-
     jsonFile << "\n]\n";
     jsonFile.close();
 
