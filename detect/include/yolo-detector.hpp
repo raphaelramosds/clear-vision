@@ -9,8 +9,9 @@
  * Structure to hold detection results
  */
 struct Detection {
+    int ts = 0;                 // Timestamp or frame number
     float x, y, w, h;           // Bounding box coordinates and dimensions
-    float confidence;            // Confidence score
+    float confidence;           // Confidence score
     int classId;                 // Class ID
     std::string className;       // Class name
 };

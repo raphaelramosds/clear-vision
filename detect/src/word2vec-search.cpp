@@ -25,15 +25,15 @@ void Word2VecSearch::load_json(const std:: string& json_path) {
         for (const auto& det_json : frame_json["detections"]) {
             Detection det;
             det.ts = det_json["ts"];
-            det.class_name = det_json["class_name"];
+            det.className = det_json["class_name"];
             det.confidence = det_json["confidence"];
             det.x = det_json["x"];
             det.y = det_json["y"];
-            det.width = det_json["width"];
-            det.height = det_json["height"];
+            det.w = det_json["width"];
+            det.h = det_json["height"];
             
             frame.detections.push_back(det);
-            unique_classes.insert(det.class_name);
+            unique_classes.insert(det.className);
         }
         
         data_.push_back(frame);
@@ -133,19 +133,40 @@ std::vector<SearchResult> Word2VecSearch::search(const std::string& query,
     
     for (const auto& frame : data_) {
         for (const auto& detection : frame.detections) {
-            float similarity = calculate_similarity(query, detection.class_name);
+            float similarity = calculate_similarity(query, detection.className);
             
             if (similarity >= min_similarity) {
-                results.push_back({frame.frame_number, detection, similarity});
+                results.push_back({detection.ts, frame.frame_number, detection, similarity});
             }
         }
     }
     
-    // Ordena por similaridade
     std::sort(results.begin(), results.end(),
               [](const SearchResult& a, const SearchResult& b) {
                   return a.similarity_score > b.similarity_score;
               });
     
     return results;
+}
+
+void Word2VecSearch::toJson(const std::string &output_path, const std::vector<SearchResult> &results)
+{
+    std::ofstream resultsFile(output_path);
+    resultsFile << "[\n";
+
+    for (size_t i = 0; i < results.size(); ++i)
+    {
+        const auto &result = results[i];
+        resultsFile << "  {\n";
+        resultsFile << "    \"ts\": " << result.ts << ",\n";
+        resultsFile << "    \"class_name\": \"" << result.detection.className << "\",\n";
+        resultsFile << "    \"similarity_score\": " << result.similarity_score << "\n";
+        resultsFile << "  }";
+        if (i < results.size() - 1)
+            resultsFile << ",";
+        resultsFile << "\n";
+    }
+
+    resultsFile << "]\n";
+    resultsFile.close();
 }
