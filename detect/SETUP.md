@@ -2,7 +2,21 @@
 
 This document provides step-by-step instructions to set up the environment required to build and run the detection model used in the Clear Vision project.
 
-## Download and compile OpenCV with CUDA support
+## JSON for Modern C++
+
+The detection model uses the [JSON for Modern C++](https://github.com/nlohmann/json) library for parsing JSON files.
+
+```bash
+sudo apt-get update
+sudo apt-get install nlohmann-json3-dev
+
+# Verificar instalação
+dpkg -s nlohmann-json3-dev
+```
+
+## OpenCV 4.14.0-pre
+
+We will download and compile this shit with CUDA support
 
 CUDA 12 or higher is required to build OpenCV with GPU support. However, GCC version 12 is required to compile CUDA 12 code. Install GCC-12 and G++-12 on your system with the following commands
 

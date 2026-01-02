@@ -1,0 +1,151 @@
+#include "../include/word2vec-search.hpp"
+
+#include <fstream>
+#include <algorithm>
+#include <cctype>
+#include <sstream>
+#include <set>
+
+Word2VecSearch::Word2VecSearch(const std::string& json_path) {
+    load_json(json_path);
+    init_synonyms();
+}
+
+void Word2VecSearch::load_json(const std:: string& json_path) {
+    std::ifstream file(json_path);
+    json j;
+    file >> j;
+    
+    std::set<std::string> unique_classes;
+    
+    for (const auto& frame_json : j) {
+        Frame frame;
+        frame.frame_number = frame_json["frame_number"];
+        
+        for (const auto& det_json : frame_json["detections"]) {
+            Detection det;
+            det.ts = det_json["ts"];
+            det.class_name = det_json["class_name"];
+            det.confidence = det_json["confidence"];
+            det.x = det_json["x"];
+            det.y = det_json["y"];
+            det.width = det_json["width"];
+            det.height = det_json["height"];
+            
+            frame.detections.push_back(det);
+            unique_classes.insert(det.class_name);
+        }
+        
+        data_.push_back(frame);
+    }
+    
+    class_names_ = std::vector<std::string>(unique_classes.begin(), unique_classes.end());
+}
+
+void Word2VecSearch::init_synonyms() {
+    // Adicione sinônimos em português e inglês
+    synonyms_["truck"] = {"caminhão", "caminhao", "vehicle", "veiculo", "veículo", "carga", "cargo"};
+    synonyms_["caminhão"] = {"truck", "caminhao", "vehicle", "veiculo", "veículo", "carga"};
+    synonyms_["car"] = {"carro", "automóvel", "automovel", "vehicle", "veiculo", "veículo"};
+    synonyms_["carro"] = {"car", "automóvel", "automovel", "vehicle"};
+    synonyms_["person"] = {"pessoa", "human", "humano", "pedestrian", "pedestre"};
+    synonyms_["pessoa"] = {"person", "human", "humano", "pedestrian", "pedestre"};
+    synonyms_["bus"] = {"ônibus", "onibus", "autobus", "autocarro"};
+    synonyms_["bicycle"] = {"bicicleta", "bike", "ciclista"};
+    synonyms_["motorcycle"] = {"motocicleta", "moto", "motorbike"};
+}
+
+std::vector<std::string> Word2VecSearch::tokenize(const std::string& text) {
+    std::vector<std:: string> tokens;
+    std:: stringstream ss(text);
+    std::string token;
+    
+    while (ss >> token) {
+        // Converte para minúsculas
+        std::transform(token.begin(), token.end(), token.begin(), ::tolower);
+        // Remove pontuação
+        token.erase(std::remove_if(token.begin(), token.end(), ::ispunct), token.end());
+        if (!token.empty()) {
+            tokens.push_back(token);
+        }
+    }
+    
+    return tokens;
+}
+
+float Word2VecSearch::levenshtein_similarity(const std::string& a, const std:: string& b) {
+    std::vector<std::vector<int>> dp(a.size() + 1, std::vector<int>(b.size() + 1));
+    
+    for (size_t i = 0; i <= a.size(); ++i) dp[i][0] = i;
+    for (size_t j = 0; j <= b. size(); ++j) dp[0][j] = j;
+    
+    for (size_t i = 1; i <= a. size(); ++i) {
+        for (size_t j = 1; j <= b.size(); ++j) {
+            if (a[i-1] == b[j-1]) {
+                dp[i][j] = dp[i-1][j-1];
+            } else {
+                dp[i][j] = 1 + std::min({dp[i-1][j], dp[i][j-1], dp[i-1][j-1]});
+            }
+        }
+    }
+    
+    int distance = dp[a.size()][b.size()];
+    int max_len = std::max(a.size(), b.size());
+    return 1.0f - (static_cast<float>(distance) / max_len);
+}
+
+float Word2VecSearch::calculate_similarity(const std::string& query, 
+                                                  const std::string& class_name) {
+    auto query_tokens = tokenize(query);
+    auto class_tokens = tokenize(class_name);
+    
+    float max_similarity = 0.0f;
+    
+    for (const auto& q_token : query_tokens) {
+        for (const auto& c_token : class_tokens) {
+            // Similaridade exata
+            if (q_token == c_token) {
+                max_similarity = std::max(max_similarity, 1.0f);
+                continue;
+            }
+            
+            // Verifica sinônimos
+            if (synonyms_.count(q_token)) {
+                for (const auto& synonym : synonyms_[q_token]) {
+                    if (synonym == c_token) {
+                        max_similarity = std::max(max_similarity, 0.9f);
+                    }
+                }
+            }
+            
+            // Similaridade de Levenshtein
+            float lev_sim = levenshtein_similarity(q_token, c_token);
+            max_similarity = std::max(max_similarity, lev_sim * 0.7f);
+        }
+    }
+    
+    return max_similarity;
+}
+
+std::vector<SearchResult> Word2VecSearch::search(const std::string& query, 
+                                                        float min_similarity) {
+    std::vector<SearchResult> results;
+    
+    for (const auto& frame : data_) {
+        for (const auto& detection : frame.detections) {
+            float similarity = calculate_similarity(query, detection.class_name);
+            
+            if (similarity >= min_similarity) {
+                results.push_back({frame.frame_number, detection, similarity});
+            }
+        }
+    }
+    
+    // Ordena por similaridade
+    std::sort(results.begin(), results.end(),
+              [](const SearchResult& a, const SearchResult& b) {
+                  return a.similarity_score > b.similarity_score;
+              });
+    
+    return results;
+}
