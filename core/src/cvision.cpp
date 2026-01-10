@@ -81,11 +81,13 @@ void cvision::annotate(const std::string &videoPath, cvision::Frame &f, cv::Mat 
 {
     cv::Mat frame;
     cv::VideoCapture cap(videoPath);
+
     cap.set(cv::CAP_PROP_POS_FRAMES, f.frameNumber);
     cap.read(frame);
 
     detector.drawDetections(frame, f.detections);
-    cap.release();
 
+    cap.release();
+    
     frame.assignTo(annotated);
 }
