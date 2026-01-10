@@ -14,3 +14,7 @@
 
 # IDEs
 .idea
+
+# Profiling
+*.out
+profiling.txt

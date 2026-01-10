@@ -2,11 +2,11 @@
 #include "levenshtein_search.hpp"
 #include <filesystem>
 #include <opencv2/opencv.hpp>
+#include <tbb/parallel_for.h>
+#include <utility>
 
 std::string modelPath = "yolov8x.onnx";
 std::string classNamesPath = "coco.names";
-YOLOModel model = YOLOModel(modelPath, classNamesPath);
-YOLODetector detector = YOLODetector(model);
 
 std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)
 {
@@ -27,15 +27,54 @@ std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)
     unsigned int height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
     unsigned int i;
 
-    // Process frames
-    std::vector<cvision::Frame> frames = {};
-    cv::Mat frame;
+    cap.release();
 
-    // TODO: parallelize this loop
+    // Process frames
+    std::vector<cvision::Frame> frames(totalFrames);
+
+    // TODO race condition if multiple threads inputs to the same net
+    // TODO large memory consumption if each thread has its own net copy
+    // TODO if a critical section is used, each thread will wait for the net access, losing parallelism benefits
+
+    // tbb::parallel_for(
+    //     tbb::blocked_range<unsigned int>(0, totalFrames),
+    //     [&](const tbb::blocked_range<unsigned int> &r)
+    //     {
+    //         YOLOModel local_model = YOLOModel(modelPath, classNamesPath);
+    //         YOLODetector local_detector = YOLODetector(local_model);
+    //         cv::VideoCapture local_cap(videoPath);
+    //         cv::Mat local_frame;
+
+    //         for (unsigned int j = r.begin(); j != r.end(); ++j)
+    //         {
+    //             // Read current frame
+    //             local_cap.set(cv::CAP_PROP_POS_FRAMES, j);
+    //             local_cap.read(local_frame);
+
+    //             // Get detections for the current frame
+    //             std::vector<Detection> current_detections = local_detector.detectObjects(local_frame);
+
+    //             Frame f;
+    //             f.frameNumber = j;
+    //             f.ts = static_cast<int>(j / fps);
+    //             f.detections = current_detections;
+    //             f.tsStr = cv::format("%02d:%02d:%02d", f.ts / 3600, (f.ts % 3600) / 60, f.ts % 60);
+
+    //             frames[j] = std::move(f);
+    //         }
+    //         local_cap.release();
+    //     },
+    //     tbb::static_partitioner());
+
+    // SEQUENTIAL PROCESSING //
+    YOLOModel model = YOLOModel(modelPath, classNamesPath);
+    YOLODetector detector = YOLODetector(model);
+    cv::VideoCapture cap2(videoPath);
+    cv::Mat frame;
     for (i = 0; i < totalFrames; ++i)
     {
         // Read current frame
-        cap.read(frame);
+        cap2.read(frame);
 
         // Get detections for the current frame
         std::vector<Detection> current_detections = detector.detectObjects(frame);
@@ -46,12 +85,11 @@ std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)
         f.detections = current_detections;
         f.tsStr = cv::format("%02d:%02d:%02d", f.ts / 3600, (f.ts % 3600) / 60, f.ts % 60);
 
-        frames.push_back(f);
-
+        frames[i] = std::move(f);
         std::cout << "Processed frame " << i + 1 << " / " << totalFrames << "\r" << std::flush;
     }
 
-    cap.release();
+    cap2.release();
 
     return frames;
 }
@@ -82,12 +120,13 @@ void cvision::annotate(const std::string &videoPath, cvision::Frame &f, cv::Mat 
     cv::Mat frame;
     cv::VideoCapture cap(videoPath);
 
+    YOLOModel model = YOLOModel(modelPath, classNamesPath);
+    YOLODetector detector = YOLODetector(model);
+
     cap.set(cv::CAP_PROP_POS_FRAMES, f.frameNumber);
     cap.read(frame);
-
     detector.drawDetections(frame, f.detections);
-
     cap.release();
-    
+
     frame.assignTo(annotated);
 }
