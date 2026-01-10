@@ -13,20 +13,14 @@ int main(int argc, char *argv[])
     cli_parse_args(argc, argv, options);
 
     // Call to API
-    std::string q = "person";
+    std::string q = "a person";
     std::vector<cvision::Frame> results = cvision::query(options.videoPath, q);
 
-    // Draw detections on the frame
-    cvision::Frame result = results[0];
+    // Get a frame and annotate it
+    cvision::Frame& result = results[10];
     cv::Mat frame;
-    cv::VideoCapture cap(options.videoPath);
-    cap.set(cv::CAP_PROP_POS_FRAMES, result.frameNumber);
-    cap.read(frame);
-    
-    // detector.drawDetections(frame, result.detections);
+    cvision::annotate(options.videoPath, result, frame);
     cv::imshow("Result Frame", frame);
-    cap.release();
-
     cv::waitKey(0);
 
     return 0;

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <opencv2/opencv.hpp>
 
 namespace cvision
 {
@@ -51,5 +52,13 @@ namespace cvision
      * @param q The search string to filter detected objects.
      * @return A vector of Frame structures that match the query.
      */
-    std::vector<cvision::Frame> query(const std::string &videoPath, const std::string &q);
+    std::vector<Frame> query(const std::string &videoPath, const std::string &q);
+
+    /**
+     * @brief Annotate a frame with bounding boxes and labels for each detection.
+     * @param videoPath Path to the video file.
+     * @param f The Frame structure to annotate.
+     * @param annotated The output annotated frame as a cv::Mat.
+     */
+    void annotate(const std::string& videoPath, Frame& f, cv::Mat& annotated);
 }

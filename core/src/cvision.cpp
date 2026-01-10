@@ -3,6 +3,11 @@
 #include <filesystem>
 #include <opencv2/opencv.hpp>
 
+std::string modelPath = "yolov8x.onnx";
+std::string classNamesPath = "coco.names";
+YOLOModel model = YOLOModel(modelPath, classNamesPath);
+YOLODetector detector = YOLODetector(model);
+
 std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)
 {
     if (!std::filesystem::exists(videoPath))
@@ -21,12 +26,6 @@ std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)
     unsigned int width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
     unsigned int height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
     unsigned int i;
-
-    // Prepare YOLO model and detector
-    std::string modelPath = "yolov8x.onnx";
-    std::string classNamesPath = "coco.names";
-    YOLOModel model = YOLOModel(modelPath, classNamesPath);
-    YOLODetector detector = YOLODetector(model);
 
     // Process frames
     std::vector<cvision::Frame> frames = {};
@@ -76,4 +75,17 @@ std::vector<cvision::Frame> cvision::query(const std::string &videoPath, const s
 {
     std::vector<cvision::Frame> frames = cvision::detect(videoPath);
     return cvision::query(frames, q);
+}
+
+void cvision::annotate(const std::string &videoPath, cvision::Frame &f, cv::Mat &annotated)
+{
+    cv::Mat frame;
+    cv::VideoCapture cap(videoPath);
+    cap.set(cv::CAP_PROP_POS_FRAMES, f.frameNumber);
+    cap.read(frame);
+
+    detector.drawDetections(frame, f.detections);
+    cap.release();
+
+    frame.assignTo(annotated);
 }
