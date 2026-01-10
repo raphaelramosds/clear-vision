@@ -1,103 +1,19 @@
-#include "../include/yolo-detector.hpp"
+#include "yolo_detector.hpp"
+#include <opencv2/opencv.hpp>
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <sstream>
-
-YOLODetector::YOLODetector()
-    : confidenceThreshold(0.1f),
-      nmsThreshold(0.1f),
-      inputWidth(640),
-      inputHeight(640) {}
-
-bool YOLODetector::loadModel(const std::string &modelPath,
-                             const std::string &configPath,
-                             const std::string &classNamesPath)
+YOLODetector::YOLODetector(YOLOModel &_model)
+    : model(_model)
 {
-    try
-    {
-        // Load class names
-        if (!classNamesPath.empty())
-        {
-            loadClassNames(classNamesPath);
-        }
-
-        // Load YOLO model
-        if (modelPath.find(".onnx") != std::string::npos)
-        {
-            // ONNX format
-            net = cv::dnn::readNetFromONNX(modelPath);
-        }
-        else if (!configPath.empty() && modelPath.find(".weights") != std::string::npos)
-        {
-            // Darknet format (.weights + .cfg)
-            net = cv::dnn::readNetFromDarknet(configPath, modelPath);
-        }
-        else
-        {
-            std::cerr << "Unsupported model format. Use .onnx or .weights + .cfg" << std::endl;
-            return false;
-        }
-
-        if (net.empty())
-        {
-            std::cerr << "Failed to load YOLO model from: " << modelPath << std::endl;
-            return false;
-        }
-
-        // Try to enable CUDA acceleration with fallback to CPU
-        bool cudaSuccess = false;
-        try
-        {
-            net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
-            net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA_FP16);
-            std::cout << "Using CUDA backend/target for YOLO inference" << std::endl;
-            cudaSuccess = true;
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "CUDA backend failed (" << e.what() << ") - falling back to CPU" << std::endl;
-            net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-            net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
-        }
-
-        std::cout << "YOLO model loaded successfully" << std::endl;
-        return true;
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error loading model: " << e.what() << std::endl;
-        return false;
-    }
 }
 
-bool YOLODetector::loadClassNames(const std::string &classNamesPath)
+std::vector<cvision::Detection> YOLODetector::detectObjects(cv::Mat &frame)
 {
-    std::ifstream file(classNamesPath);
-    if (!file.is_open())
-    {
-        std::cerr << "Cannot open class names file: " << classNamesPath << std::endl;
-        return false;
-    }
-
-    std::string line;
-    while (std::getline(file, line))
-    {
-        if (!line.empty())
-        {
-            classNames.push_back(line);
-        }
-    }
-    file.close();
-    std::cout << "Loaded " << classNames.size() << " class names" << std::endl;
-    return true;
-}
-
-std::vector<Detection> YOLODetector::detectObjects(cv::Mat &frame)
-{
-    std::vector<Detection> detections;
-
+    std::vector<cvision::Detection> detections;
+    cv::dnn::Net &net = model.getNet();
+    int inputWidth = model.getInputWidth();
+    int inputHeight = model.getInputHeight();
+    float confidenceThreshold = model.getConfidenceThreshold();
+    float nmsThreshold = model.getNmsThreshold();
     if (net.empty())
     {
         std::cerr << "Model not loaded" << std::endl;
@@ -171,21 +87,21 @@ std::vector<Detection> YOLODetector::detectObjects(cv::Mat &frame)
     // Create detection results
     for (int idx : indices)
     {
-        Detection det;
+        cvision::Detection det;
         det.x = boxes[idx].x;
         det.y = boxes[idx].y;
         det.w = boxes[idx].width;
         det.h = boxes[idx].height;
         det.confidence = confidences[idx];
         det.classId = classIds[idx];
-        det.className = getClassName(classIds[idx]);
+        det.className = model.getClassName(classIds[idx]);
         detections.push_back(det);
     }
 
     return detections;
 }
 
-void YOLODetector::drawDetections(cv::Mat &frame, const std::vector<Detection> &detections)
+void YOLODetector::drawDetections(cv::Mat &frame, const std::vector<cvision::Detection> &detections)
 {
     for (const auto &det : detections)
     {
@@ -209,33 +125,4 @@ void YOLODetector::drawDetections(cv::Mat &frame, const std::vector<Detection> &
         cv::putText(frame, label.str(), cv::Point(det.x, det.y - 5),
                     cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1);
     }
-}
-
-void YOLODetector::setConfidenceThreshold(float threshold)
-{
-    confidenceThreshold = threshold;
-}
-
-void YOLODetector::setNmsThreshold(float threshold)
-{
-    nmsThreshold = threshold;
-}
-
-bool YOLODetector::isModelLoaded() const
-{
-    return !net.empty();
-}
-
-int YOLODetector::getClassCount() const
-{
-    return static_cast<int>(classNames.size());
-}
-
-std::string YOLODetector::getClassName(int classId) const
-{
-    if (classId < 0 || classId >= static_cast<int>(classNames.size()))
-    {
-        return "Unknown";
-    }
-    return classNames[classId];
 }

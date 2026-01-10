@@ -4,7 +4,7 @@
 
 namespace fs = std::filesystem;
 
-struct CliOptions
+struct cli_options
 {
     std::string videoPath;
     std::string modelPath;
@@ -16,27 +16,26 @@ struct CliOptions
     float confidenceThreshold = 0.5f;
 };
 
-void printUsage(const std::string &programName)
+void print_usage(const std::string &program)
 {
-    std::cout << "Usage: " << programName << " <video_path> [options]\n\n"
+    std::cout << "Usage: " << program << " <video_path> [options]\n\n"
               << "Options:\n"
               << "  -m, --model <path>           Path to YOLO model (.onnx)\n"
-              << "  -c, --config <path>          Path to YOLO config (.cfg) for .weights models\n"
               << "  -n, --names <path>           Path to class names file\n"
-              << "  -o, --output <path>          Output video path (mp4)\n"
-              << "  -j, --json <path>            Save detections to JSON file\n"
-              << "  -s, --skip <n>               Process every Nth frame (default: 1)\n"
               << "  -t, --threshold <0-1>        Confidence threshold (default: 0.5)\n"
+              << "  -s, --nms <0-1>              NMS threshold (default: 0.4)\n"
               << "  -h, --help                   Show this help message\n"
               << "\nExample:\n"
-              << "  " << programName << " video.mp4 -m yolov8n.onnx -n coco.names -o output.mp4\n";
+              << "  " << program << " video.mp4 -m yolov8n.onnx -n coco.names\n";
 }
 
-bool readArgs(int argc, char *argv[], CliOptions &options)
+inline void cli_parse_args(int argc, char *argv[], cli_options &options)
 {
+    // Read args
     if (argc < 2)
     {
-        return false;
+        print_usage(argv[0]);
+        exit(1);
     }
 
     options.videoPath = argv[1];
@@ -75,44 +74,27 @@ bool readArgs(int argc, char *argv[], CliOptions &options)
         }
         else if (arg == "-h" || arg == "--help")
         {
-            return false;
+            print_usage(argv[0]);
+            exit(0);
         }
     }
 
-    return true;
-}
-
-bool validateOptions(const CliOptions &options)
-{
+    // Validate options
     if (!fs::exists(options.videoPath))
     {
         std::cerr << "Video file not found: " << options.videoPath << std::endl;
-        return false;
+        exit(1);
     }
 
     if (options.modelPath.empty())
     {
         std::cerr << "Error: Model path is required (-m or --model)" << std::endl;
-        return false;
+        exit(1);
     }
 
     if (!fs::exists(options.modelPath))
     {
         std::cerr << "Model file not found: " << options.modelPath << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-inline void cliHandler(int argc, char *argv[], CliOptions &options)
-{
-    if (!readArgs(argc, argv, options)) {
-        printUsage(argv[0]);
-        exit(1);
-    }
-
-    if (!validateOptions(options)) {
         exit(1);
     }
 

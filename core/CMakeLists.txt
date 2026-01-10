@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ClearVisionDetect LANGUAGES CXX)
+project(cvision LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,15 +23,21 @@ message(STATUS "--- JSON for Modern C++ Diagnostic ---")
 message(STATUS "nlohmann_json version: ${nlohmann_json_VERSION}")
 
 # Create executable FIRST
-add_executable(DetectModule 
-    src/detect.cpp
-    src/yolo-detector.cpp
-    src/video-processor.cpp
-    src/levenshtein-search.cpp
+add_executable(cvision 
+    cli/cvision_cli.cpp
+    src/cvision.cpp
+    src/levenshtein_search.cpp
+    src/yolo_detector.cpp
+    src/yolo_model.cpp
 )
 
-# THEN configure it
-target_include_directories(DetectModule PRIVATE ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(DetectModule PRIVATE ${OpenCV_LIBRARIES} nlohmann_json::nlohmann_json)
+# Include headers directories and link libraries
+target_include_directories(cvision PRIVATE 
+    ${OpenCV_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/lib
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/cli
+)
+target_link_libraries(cvision PRIVATE ${OpenCV_LIBRARIES} nlohmann_json::nlohmann_json)
 
-install(TARGETS DetectModule DESTINATION bin)
+install(TARGETS cvision DESTINATION bin)
