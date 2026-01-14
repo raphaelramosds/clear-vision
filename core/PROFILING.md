@@ -22,5 +22,5 @@ When this option is enabled, the compiler and linker flags `-pg` will be added t
 Then interpret the profiling data with gprof
 
 ```bash
-gprof --ignore-non-functions build/cvision > profiling.txt
+gprof --ignore-non-functions build/cvision > profiling/profiling.txt
 ```
