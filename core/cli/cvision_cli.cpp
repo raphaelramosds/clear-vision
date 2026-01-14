@@ -16,6 +16,12 @@ int main(int argc, char *argv[])
     std::string q = "a person";
     std::vector<cvision::Frame> results = cvision::query(options.videoPath, q);
 
+    if (results.empty())
+    {
+        std::cout << "No results found." << std::endl;
+        return 0;
+    }
+
     // Get a frame and annotate it
     cvision::Frame& result = results[10];
     cv::Mat frame;

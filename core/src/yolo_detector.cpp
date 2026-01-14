@@ -41,25 +41,28 @@ std::vector<cvision::Detection> YOLODetector::detectObjects(cv::Mat &frame)
 
     for (const auto &output : outputs)
     {
-        const float* ptr = output.ptr<float>(0);
-        int cols = output.size[2];
-        int lines = output.size[1];
-
         // FIXME will break for other YOLO versions (like YOLOv5, v6, v7)
 
         // Expect a YOLOv8 tensor [1, 84, 8400] output format.
         // Indices 0-3: x, y, w, h
         // Indices 4-83: class probabilities (no separate confidence)
-        for (int i = 0; i < cols; ++i)
+        int numBoxes = output.size[2]; // 8400
+        int numAttributes = output.size[1]; // 84 for YOLOv8
+
+        // Transpose output to shape [1, boxes = 84000, attributes = 84] for better cache access
+        cv::Mat outputReshaped = output.reshape(1, numAttributes).t();
+        
+        for (int i = 0; i < numBoxes; ++i)
         {
+            const float* ptr = outputReshaped.ptr<float>(i);
             int classId = 0;
             float maxProb = 0.0f;
 
             // Find class with max probability (indices 4-83)
-            for (int c = 4; c < lines; ++c)
+            for (int c = 4; c < numAttributes; ++c)
             {
                 // float prob = output.at<float>(0, c, i);
-                float prob = ptr[c*cols + i];
+                float prob = ptr[c];
                 
                 if (prob > maxProb)
                 {
@@ -76,10 +79,10 @@ std::vector<cvision::Detection> YOLODetector::detectObjects(cv::Mat &frame)
                 // w = output.at<float>(0, 2, i) * xScale;
                 // h = output.at<float>(0, 3, i) * yScale;
 
-                x = ptr[0*cols + i] * xScale;
-                y = ptr[1*cols + i] * yScale;
-                w = ptr[2*cols + i] * xScale;
-                h = ptr[3*cols + i] * yScale;
+                x = ptr[0] * xScale;
+                y = ptr[1] * yScale;
+                w = ptr[2] * xScale;
+                h = ptr[3] * yScale;
 
                 boxes.push_back(cv::Rect(
                     static_cast<int>(x - w / 2),
