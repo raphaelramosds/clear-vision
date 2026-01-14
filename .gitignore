@@ -17,4 +17,4 @@
 
 # Profiling
 *.out
-profiling.txt
+profiling*
