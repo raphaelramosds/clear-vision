@@ -18,7 +18,9 @@ dpkg -s nlohmann-json3-dev
 
 We will download and compile this shit with CUDA support
 
-CUDA 12 or higher is required to build OpenCV with GPU support. However, GCC version 12 is required to compile CUDA 12 code. Install GCC-12 and G++-12 on your system with the following commands
+CUDA 12 or higher is required to build OpenCV with GPU support and GCC version 12 is required to compile CUDA 12 code. Therefore, refer to [CUDA Toolkit Download](https://developer.nvidia.com/cuda-downloads)
+
+Install GCC-12 and G++-12 on your system with the following commands
 
 ```bash
 sudo apt update
@@ -29,12 +31,14 @@ See the list of GPUs that support CUDA on[CUDA GPU capability](https://developer
 
 It is important to install de cuDNN library from NVIDIA to enable GPU acceleration for deep learning tasks.
 
-> In case you want a differente installation configuration, please refer to the [NVIDIA cuDNN installation guide](https://developer.nvidia.com/cudnn-downloads)
+> In case you want a different installation configuration, please refer to the [NVIDIA cuDNN installation guide](https://developer.nvidia.com/cudnn-downloads)
 
 ```bash
+# Install Deep Neural Network implementations for CUDA
 wget https://developer.download.nvidia.com/compute/cudnn/9.17.1/local_installers/cudnn-local-repo-ubuntu2404-9.17.1_1.0-1_amd64.deb
-sudo dpkg -i cudnn-local-repo-ubuntu2404-9.17.1_1.0-1_amd64.deb
+
 sudo cp /var/cudnn-local-repo-ubuntu2404-9.17.1/cudnn-*-keyring.gpg /usr/share/keyrings/
+sudo dpkg -i cudnn-local-repo-ubuntu2404-9.17.1_1.0-1_amd64.deb
 sudo apt-get update
 
 # See your CUDA version with
@@ -57,6 +61,8 @@ Beforehand, note the following paths that will be used in the cmake command to b
 - CUDA_CUDART_LIBRARY can be found with the command `find /usr -name "libcudart.so"`.
 - CUDA_INCLUDE_DIRS is usually `/usr/include`.
 - CUDA_TOOLKIT_ROOT_DIR is usually `/usr`.
+
+> Altere os paths acima conforme a sua instalação do CUDA, pois pode haver mais de uma versão instalada no sistema
 
 ```bash
 
@@ -102,7 +108,7 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
 -D CMAKE_C_COMPILER=gcc-12 \
 -D CMAKE_CXX_COMPILER=g++-12 \
 -D OPENCV_GENERATE_PKGCONFIG=ON \
--D CUDA_TOOLKIT_ROOT_DIR=/usr \
+-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-13 \
 -D CUDA_INCLUDE_DIRS=/usr/include \
 -D CUDA_CUDART_LIBRARY=/usr/lib/x86_64-linux-gnu/libcudart.so \
 -D CUDA_NVCC_FLAGS="-allow-unsupported-compiler" \
@@ -120,98 +126,11 @@ ls /usr/local/lib/pkgconfig | grep opencv
 ## Download model
 
 ```bash
+# Install ultralytics package to export the model to ONNX format
+pip install ultralytics
+
+# Download YOLOv8x model weights
 yolo export model=yolov8n.pt format=onnx opset=12
 ```
 
 This model is trained to detect objects from the COCO dataset. I already provided the `coco.names` file in this folder, but if you want to create your own, you can find the list of classes in the [COCO dataset website](https://cocodataset.org/#home).
-
-## Debug
-
-Create the following files in the `.vscode` folder at the root of the project to enable building and debugging the detection model in VSCode.
-
-- `tasks.json`: task to build the project in debug mode
-
-```json
-{
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build-detect",
-            "type": "shell",
-            "command": "cd ${workspaceFolder}/core && cmake -DCMAKE_BUILD_TYPE=Debug -B build && cmake --build build",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "detail": "Build the detect/video-processor project"
-        },
-        {
-            "label": "clean-detect",
-            "type": "shell",
-            "command": "rm -rf ${workspaceFolder}/core/build",
-            "detail": "Clean build artifacts"
-        }
-    ]
-}
-
-```
-
-Configuration to debug the video-processor application with specific arguments
-
-- `launch.json`
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug cvision",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/core/build/cvision",
-            "args": [
-                "${workspaceFolder}/core/video_rua01.mp4",
-                "-m",
-                "${workspaceFolder}/core/yolov8x.onnx",
-                "-n",
-                "${workspaceFolder}/core/coco.names",
-                "-t",
-                "0.2",
-            ],
-            "cwd": "${workspaceFolder}/core",
-            "preLaunchTask": "build-detect",
-            "miDebuggerPath": "/usr/bin/gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for GDB",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
-        },
-    ]
-}
-```
-
-- `c_cpp_properties.json`: include paths for IntelliSense
-```json
-{
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/local/include/opencv4"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/g++",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "linux-gcc-x64"
-        }
-    ],
-    "version": 4
-}
-```
