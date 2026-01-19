@@ -2,10 +2,10 @@
 #include "levenshtein_search.hpp"
 #include <filesystem>
 #include <opencv2/opencv.hpp>
-#include <tbb/parallel_for.h>
+// #include <tbb/parallel_for.h>
 #include <utility>
 
-std::string modelPath = "yolov8x.onnx";
+std::string modelPath = "yolov8n.onnx";
 std::string classNamesPath = "coco.names";
 
 std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)

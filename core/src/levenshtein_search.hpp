@@ -3,9 +3,9 @@
 #include "cvision.hpp"
 #include <unordered_map>
 #include <fstream>
-#include <nlohmann/json.hpp> // Head-only library for JSON parsing
+// #include <nlohmann/json.hpp> // Head-only library for JSON parsing
 
-using json = nlohmann::json;
+// using json = nlohmann::json;
 
 class LevenshteinSearch
 {
