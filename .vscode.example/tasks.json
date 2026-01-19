@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-detect",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/core && cmake -DCMAKE_BUILD_TYPE=Debug -B build && cmake --build build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build the detect/video-processor project"
+        },
+        {
+            "label": "clean-detect",
+            "type": "shell",
+            "command": "rm -rf ${workspaceFolder}/core/build",
+            "detail": "Clean build artifacts"
+        }
+    ]
+}
