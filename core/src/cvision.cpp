@@ -5,7 +5,7 @@
 // #include <tbb/parallel_for.h>
 #include <utility>
 
-std::string modelPath = "yolov8n.onnx";
+std::string modelPath = "yolov8x.onnx";
 std::string classNamesPath = "coco.names";
 
 std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)

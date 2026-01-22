@@ -16,6 +16,14 @@ dpkg -s nlohmann-json3-dev
 
 ## OpenCV 4.14.0-pre
 
+### Via package manager
+
+```bash
+sudo pacman -S cmake make qt6-base vtk hdf5 opencv-cuda
+```
+
+### Compiling from source
+
 We will download and compile this shit with CUDA support
 
 CUDA 12 or higher is required to build OpenCV with GPU support and GCC version 12 is required to compile CUDA 12 code. Therefore, refer to [CUDA Toolkit Download](https://developer.nvidia.com/cuda-downloads)
@@ -123,11 +131,13 @@ ls /usr/local/lib/pkgconfig | grep opencv
 
 > More info on [Installing OpenCV on Ubuntu](https://phoenixnap.com/kb/installing-opencv-on-ubuntu)
 
+
+
 ## Download model
 
 ```bash
 # Install ultralytics package to export the model to ONNX format
-pip install ultralytics
+pip install ultralytics onnx
 
 # Download YOLOv8x model weights
 yolo export model=yolov8n.pt format=onnx opset=12
