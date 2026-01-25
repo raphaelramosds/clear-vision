@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(CVISION_ENABLE_GPROF "Enable -pg instrumentation for gprof" OFF)
+option(USE_CUDA "Enable CUDA acceleration for YOLO inference" ON)
+option(USE_OPENMP "Enable OpenMP" ON)
 
 # OpenCV library check
 find_package(OpenCV 4 REQUIRED)
@@ -30,6 +32,13 @@ endif()
 # message(STATUS "TBB include directories: ${TBB_INCLUDE_DIRS}")
 # message(STATUS "TBB libraries: ${TBB_IMPORTED_TARGETS}")
 
+find_package(OpenMP REQUIRED)
+if(OpenMP_FOUND)
+    message(STATUS "--- OpenMP Diagnostic ---")
+    message(STATUS "OpenMP found and enabled.")
+    message(STATUS "OpenMP flags: ${OpenMP_CXX_FLAGS}")
+endif()
+
 # Create executable FIRST
 add_executable(cvision 
     cli/cvision_cli.cpp
@@ -47,9 +56,20 @@ target_include_directories(cvision PRIVATE
     ${PROJECT_SOURCE_DIR}/cli
 )
 target_link_libraries(cvision PRIVATE ${OpenCV_LIBRARIES} 
-    # nlohmann_json::nlohmann_json 
     # TBB::tbb
+    # nlohmann_json::nlohmann_json 
 )
+
+if(USE_OPENMP AND OpenMP_FOUND)
+    target_link_libraries(cvision PRIVATE OpenMP::OpenMP_CXX)
+endif()
+
+if(USE_CUDA)
+    target_compile_definitions(cvision PRIVATE USE_CUDA)
+    message(STATUS "CUDA acceleration enabled for YOLO inference")
+else()
+    message(STATUS "CUDA acceleration disabled, using CPU only")
+endif()
 
 if(CVISION_ENABLE_GPROF)
     message(STATUS "gprof instrumentation enabled (-pg)")

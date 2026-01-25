@@ -140,7 +140,9 @@ ls /usr/local/lib/pkgconfig | grep opencv
 pip install ultralytics onnx
 
 # Download YOLOv8x model weights
-yolo export model=yolov8n.pt format=onnx opset=12
+yolo export model=yolov8n.pt format=onnx opset=12 batch=4 dynamic=True
 ```
 
 This model is trained to detect objects from the COCO dataset. I already provided the `coco.names` file in this folder, but if you want to create your own, you can find the list of classes in the [COCO dataset website](https://cocodataset.org/#home).
+
+More on: https://docs.ultralytics.com/integrations/onnx/#export-arguments

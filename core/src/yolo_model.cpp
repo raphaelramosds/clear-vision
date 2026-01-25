@@ -57,14 +57,13 @@ YOLOModel::YOLOModel(
             throw std::runtime_error("Failed to load model");
         }
 
+#ifdef USE_CUDA
         // Try to enable CUDA acceleration with fallback to CPU
-        bool cudaSuccess = false;
         try
         {
             net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
             net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA_FP16);
             std::cout << "Using CUDA backend/target for YOLO inference" << std::endl;
-            cudaSuccess = true;
         }
         catch (const std::exception &e)
         {
@@ -72,6 +71,12 @@ YOLOModel::YOLOModel(
             net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
             net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
         }
+#else
+        // CPU only
+        net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+        net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+        std::cout << "Using CPU backend/target for YOLO inference" << std::endl;
+#endif
 
         std::cout << "YOLO model loaded successfully" << std::endl;
     }

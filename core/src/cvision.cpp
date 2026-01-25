@@ -2,10 +2,12 @@
 #include "levenshtein_search.hpp"
 #include <filesystem>
 #include <opencv2/opencv.hpp>
+#include <omp.h>
+#include <chrono>
 // #include <tbb/parallel_for.h>
 #include <utility>
 
-std::string modelPath = "yolov8x.onnx";
+std::string modelPath = "yolov8n.onnx";
 std::string classNamesPath = "coco.names";
 
 std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)
@@ -32,62 +34,65 @@ std::vector<cvision::Frame> cvision::detect(const std::string &videoPath)
     // Process frames
     std::vector<cvision::Frame> frames(totalFrames);
 
-    // TODO race condition if multiple threads inputs to the same net
-    // TODO large memory consumption if each thread has its own net copy
-    // TODO if a critical section is used, each thread will wait for the net access, losing parallelism benefits
-
-    // tbb::parallel_for(
-    //     tbb::blocked_range<unsigned int>(0, totalFrames),
-    //     [&](const tbb::blocked_range<unsigned int> &r)
-    //     {
-    //         YOLOModel local_model = YOLOModel(modelPath, classNamesPath);
-    //         YOLODetector local_detector = YOLODetector(local_model);
-    //         cv::VideoCapture local_cap(videoPath);
-    //         cv::Mat local_frame;
-
-    //         for (unsigned int j = r.begin(); j != r.end(); ++j)
-    //         {
-    //             // Read current frame
-    //             local_cap.set(cv::CAP_PROP_POS_FRAMES, j);
-    //             local_cap.read(local_frame);
-
-    //             // Get detections for the current frame
-    //             std::vector<Detection> current_detections = local_detector.detectObjects(local_frame);
-
-    //             Frame f;
-    //             f.frameNumber = j;
-    //             f.ts = static_cast<int>(j / fps);
-    //             f.detections = current_detections;
-    //             f.tsStr = cv::format("%02d:%02d:%02d", f.ts / 3600, (f.ts % 3600) / 60, f.ts % 60);
-
-    //             frames[j] = std::move(f);
-    //         }
-    //         local_cap.release();
-    //     },
-    //     tbb::static_partitioner());
-
-    // SEQUENTIAL PROCESSING //
     YOLOModel model = YOLOModel(modelPath, classNamesPath);
     YOLODetector detector = YOLODetector(model);
     cv::VideoCapture cap2(videoPath);
     cv::Mat frame;
-    for (i = 0; i < totalFrames; ++i)
+
+#ifdef _OPENMP
+    double start_time = omp_get_wtime();
+#else
+    auto start_time = std::chrono::high_resolution_clock::now();
+#endif
+
+#pragma omp parallel
     {
-        // Read current frame
-        cap2.read(frame);
+        cv::VideoCapture local_cap(videoPath);
+        cv::Mat local_frame;
+        std::vector<cvision::Frame> local_frames;
 
-        // Get detections for the current frame
-        std::vector<Detection> current_detections = detector.detectObjects(frame);
+#pragma omp for 
+        for (i = 0; i < totalFrames; ++i)
+        {
+            // Read current frame
+            local_cap.set(cv::CAP_PROP_POS_FRAMES, i);
+            local_cap.read(local_frame);
 
-        Frame f;
-        f.frameNumber = i;
-        f.ts = static_cast<int>(i / fps);
-        f.detections = current_detections;
-        f.tsStr = cv::format("%02d:%02d:%02d", f.ts / 3600, (f.ts % 3600) / 60, f.ts % 60);
+            // Get detections for the current frame
+            // Critical section needed because cv::dnn::Net is not thread-safe
+            std::vector<Detection> current_detections;
+#pragma omp critical
+            {
+                current_detections = detector.detectObjects(local_frame);
+            }
 
-        frames[i] = std::move(f);
-        std::cout << "Processed frame " << i + 1 << " / " << totalFrames << "\r" << std::flush;
+            Frame f;
+            f.frameNumber = i;
+            f.ts = static_cast<int>(i / fps);
+            f.detections = current_detections;
+            f.tsStr = cv::format("%02d:%02d:%02d", f.ts / 3600, (f.ts % 3600) / 60, f.ts % 60);
+
+            local_frames.push_back(f);
+        }
+
+        // Copy local results to global frames array
+#pragma omp critical
+        {
+            for (const auto& f : local_frames)
+            {
+                frames[f.frameNumber] = f;
+            }
+        }
     }
+
+#ifdef _OPENMP
+    double end_time = omp_get_wtime();
+    std::cout << "Execution time: " << end_time - start_time << " seconds" << std::endl;
+#else
+    auto end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end_time - start_time;
+    std::cout << "Execution time: " << elapsed.count() << " seconds" << std::endl;
+#endif
 
     cap2.release();
 

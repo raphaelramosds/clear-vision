@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug cvision",
+            "name": "Run cvision",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/core/build/cvision",
@@ -26,5 +26,55 @@
                 }
             ]
         },
+        {
+            "name": "Run cvision with OpenMP",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/core/build/cvision",
+            "args": [
+                "${workspaceFolder}/core/video_rua01.mp4",
+                "-m",
+                "${workspaceFolder}/core/yolov8x.onnx",
+                "-n",
+                "${workspaceFolder}/core/coco.names",
+                "-t",
+                "0.2",
+            ],
+            "cwd": "${workspaceFolder}/core",
+            "preLaunchTask": "build-detect-openmp",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Run cvision CPU only",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/core/build/cvision",
+            "args": [
+                "${workspaceFolder}/core/video_rua01.mp4",
+                "-m",
+                "${workspaceFolder}/core/yolov8x.onnx",
+                "-n",
+                "${workspaceFolder}/core/coco.names",
+                "-t",
+                "0.2",
+            ],
+            "cwd": "${workspaceFolder}/core",
+            "preLaunchTask": "build-detect-cpu",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
     ]
 }
