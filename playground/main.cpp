@@ -1,5 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include "utils.h"
 
 void loadNet(const char *onnxPath, cv::dnn::Net &net)
 {
@@ -84,20 +85,6 @@ void processBatch(std::vector<cv::Mat> &batch, cv::dnn::Net &net)
 
     // Exemplo: Acessar os dados da primeira imagem no batch
     // cv::Mat firstImageResult(numAttributes, numPredictions, CV_32F, output.ptr<float>(0));
-}
-
-template <typename Func, typename... Args>
-void TIMEIT(std::string label, Func func, Args &&...args)
-{
-    auto start = std::chrono::high_resolution_clock::now();
-
-    // Executa a função passando os argumentos
-    std::invoke(func, std::forward<Args>(args)...);
-
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-
-    std::cout << label << elapsed.count() << "s" << std::endl;
 }
 
 int main(int argv, char **argc)
