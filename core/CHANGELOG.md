@@ -13,7 +13,7 @@ Exportação do modelo ONNX com mais de um batch: (batch x 3 x 640 x 640) -> (1 
 - Talvez abandone o uso de múltiplas threads
 
 Amostrar todos os frames de um vídeo e guardá-los na memória
-- Estouro de memória 
+- Estouro de memória: muitos cv::Mat guardados ocupa bastante memória 
 - Pode ser solucionado com uma estratégia de buffer: ter uma opção do usuário clicar em "próxima detecção" ou "detecção anterior"
 - Buffer guarda até N detecções
 - Evitar carregar todo o vídeo na memória
