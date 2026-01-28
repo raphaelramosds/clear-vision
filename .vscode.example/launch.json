@@ -9,7 +9,7 @@
             "args": [
                 "${workspaceFolder}/core/video_rua01.mp4",
                 "-m",
-                "${workspaceFolder}/core/yolov8x.onnx",
+                "${workspaceFolder}/core/yolov8n.onnx",
                 "-n",
                 "${workspaceFolder}/core/coco.names",
                 "-t",
@@ -32,9 +32,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/core/build/cvision",
             "args": [
-                "${workspaceFolder}/core/video_rua01.mp4",
+                "${workspaceFolder}/core/canal1-1min.mp4",
                 "-m",
-                "${workspaceFolder}/core/yolov8x.onnx",
+                "${workspaceFolder}/core/yolov8n.onnx",
                 "-n",
                 "${workspaceFolder}/core/coco.names",
                 "-t",
@@ -59,7 +59,7 @@
             "args": [
                 "${workspaceFolder}/core/video_rua01.mp4",
                 "-m",
-                "${workspaceFolder}/core/yolov8x.onnx",
+                "${workspaceFolder}/core/yolov8n.onnx",
                 "-n",
                 "${workspaceFolder}/core/coco.names",
                 "-t",
@@ -75,6 +75,23 @@
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
+        {
+            "name": "Run playground batch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/playground/batch",
+            "args": [],
+            "cwd": "${workspaceFolder}/playground",
+            "preLaunchTask": "build-playground",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }
