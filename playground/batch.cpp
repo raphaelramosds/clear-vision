@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     int targetClassId = find_class_id(objectQuery, classNames);
     if (targetClassId == -1)
     {
-        std::cerr << "Objeto '" << objectQuery << "' n\u00e3o encontrado nas classes COCO" << std::endl;
+        std::cerr << "Objeto '" << objectQuery << "' nao encontrado nas classes COCO" << std::endl;
         return 1;
     }
 
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
                 int miniStartFrame = startFrame + i;
                 int originalSize = miniBatch.size();
                 
-                // Aplicar padding se necess\u00e1rio (mini-batch incompleto)
+                // Aplicar padding se necessario (mini-batch incompleto)
                 while (miniBatch.size() < MINI_BATCH_SIZE)
                 {
                     // Criar frame preto do mesmo tamanho do primeiro frame
@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
                     std::vector<Detection> validDetections;
                     for (size_t d = detectionsBefore; d < detections.size(); ++d)
                     {
-                        // Manter apenas detec\u00e7\u00f5es dos frames originais
+                        // Manter apenas detecções dos frames originais
                         if (detections[d].frameNumber < miniStartFrame + originalSize)
                         {
                             validDetections.push_back(detections[d]);
