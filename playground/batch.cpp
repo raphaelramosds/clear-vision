@@ -4,50 +4,229 @@
 #include <opencv2/opencv.hpp>
 #include "utils.h"
 
-int main(int argv, char **argc)
+int main()
 {
     const char *videoPath = "video_rua01.mp4";
     const char *onnxPath = "yolov8n.onnx";
+    const char *classNamesPath = "../core/coco.names";
+    const char *outputDir = "output";
 
-    // Carregar rede
+    // Carregar nomes das classes
+    std::vector<std::string> classNames;
+    try
+    {
+        classNames = load_class_names(classNamesPath);
+        std::cout << "Carregadas " << classNames.size() << " classes" << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Erro: " << e.what() << std::endl;
+        return 1;
+    }
+
+    // Carregar rede neural
     cv::dnn::Net net;
-    TIMEIT("loadNet: ", loadNet, onnxPath, net);
+    try
+    {
+        TIMEIT("Carregando modelo: ", loadNet, onnxPath, net);
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Erro: " << e.what() << std::endl;
+        return 1;
+    }
 
-    // Amostrar N frames
-    // std::vector<cv::Mat> frames = {};
-    // int N = 12;
-    // sampleFrames(videoPath, N, frames);
-    // std::vector<cv::Mat> batch(frames.begin(), frames.begin() + 4);
-    // printf("Bach possui %d frames\n", batch.size());
+    // Perguntar qual objeto o usuario deseja buscar
+    std::cout << "\nDigite o nome do objeto que deseja buscar (ex: person, car, dog): ";
+    std::string objectQuery;
+    std::getline(std::cin, objectQuery);
 
-    // Inserir e processar um batch na rede neural
-    std::vector<Detection> detections = {};
-    // TIMEIT("processBatch: ", processBatch, batch, net, detections);
+    int targetClassId = find_class_id(objectQuery, classNames);
+    if (targetClassId == -1)
+    {
+        std::cerr << "Objeto '" << objectQuery << "' n\u00e3o encontrado nas classes COCO" << std::endl;
+        return 1;
+    }
 
-    // printf("%ld classes detectadas\n", detections.size());
+    std::cout << "Buscando por: " << classNames[targetClassId] << " (ID " << targetClassId << ")" << std::endl;
 
-    // Amostrar muitos frames (estouro de stack)
-    // frames.clear();
-    // TIMEIT("sampleFrames: ", sampleFrames, videoPath, 1000, frames);
+    // Criar diretório de saída com timestamp e nome do objeto
+    std::string outputDirPath;
+    try
+    {
+        outputDirPath = create_output_directory(outputDir, classNames[targetClassId]);
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Erro ao criar diretório: " << e.what() << std::endl;
+        return 1;
+    }
 
+    // Abrir video
     cv::VideoCapture cap(videoPath);
     if (!cap.isOpened())
     {
-        throw std::invalid_argument(std::string("Video file does not exist: ") + videoPath);
+        std::cerr << "Erro ao abrir video: " << videoPath << std::endl;
+        return 1;
     }
 
-    unsigned int totalFrames = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_COUNT));
-    unsigned int remainingBatches = totalFrames % BATCH_SIZE;
-    unsigned int numBatches = totalFrames / BATCH_SIZE;
-    unsigned int currFrame = 0;
-    unsigned int currBatch = 0;
-    
+    unsigned int totalFrames = static_cast<unsigned int>(cap.get(cv::CAP_PROP_FRAME_COUNT));
+    unsigned int currentFrame = 0;
+    unsigned int batchCount = 0;
 
-    // 1. Extrair primeiros BATCH_SIZE frames 
-    // 2. Coloca-los em um std::vector<cv::Mat> batch
-    // 3. Chamar a função processBatch(std::vector<cv::Mat> &batch, cv::dnn::Net &net, int currFrame, std::vector<Detection> &detections)
-    // 4. Caso detections.size() == 0 prossiga para a leitura do próximo batch
-    //    Caso contrario, salve as deteccoes e pergunte se o usuário deseja proseguir para o próximo batch
+    std::cout << "Total de frames no video: " << totalFrames << std::endl;
+    std::cout << "Processando em batches de " << BATCH_SIZE << " frames" << std::endl;
+
+    // Loop principal: processar batches
+    while (currentFrame < totalFrames)
+    {
+        batchCount++;
+        std::cout << "\n=== Batch " << batchCount << " ===" << std::endl;
+
+        // Ler BATCH_SIZE frames
+        std::vector<cv::Mat> batch;
+        for (int i = 0; i < BATCH_SIZE && currentFrame < totalFrames; ++i, ++currentFrame)
+        {
+            cv::Mat frame;
+            bool success = cap.read(frame);
+            
+            if (!success || frame.empty())
+            {
+                std::cerr << "Erro ao ler frame " << currentFrame << std::endl;
+                break;
+            }
+            
+            batch.push_back(frame.clone());
+        }
+
+        if (batch.empty())
+        {
+            std::cout << "Nenhum frame lido. Fim do video." << std::endl;
+            break;
+        }
+
+        std::cout << "Lidos " << batch.size() << " frames (frame " 
+                  << (currentFrame - batch.size()) << " a " << (currentFrame - 1) << ")" << std::endl;
+
+        // Aplicar deteccoes em todos os frames do batch
+        // Processar em mini-batches de 4 frames (limite da rede neural)
+        std::vector<Detection> detections;
+        int startFrame = currentFrame - batch.size();
+        const int MINI_BATCH_SIZE = 4;
+        
+        try
+        {
+            for (size_t i = 0; i < batch.size(); i += MINI_BATCH_SIZE)
+            {
+                size_t end = std::min(i + MINI_BATCH_SIZE, batch.size());
+                std::vector<cv::Mat> miniBatch(batch.begin() + i, batch.begin() + end);
+                int miniStartFrame = startFrame + i;
+                int originalSize = miniBatch.size();
+                
+                // Aplicar padding se necess\u00e1rio (mini-batch incompleto)
+                while (miniBatch.size() < MINI_BATCH_SIZE)
+                {
+                    // Criar frame preto do mesmo tamanho do primeiro frame
+                    cv::Mat paddingFrame = cv::Mat::zeros(miniBatch[0].rows, miniBatch[0].cols, miniBatch[0].type());
+                    miniBatch.push_back(paddingFrame);
+                }
+                
+                // Processar o mini-batch (sempre com 4 frames)
+                size_t detectionsBefore = detections.size();
+                processBatch(miniBatch, net, miniStartFrame, detections);
+                
+                // Remover deteccoes frames de padding
+                if (originalSize < MINI_BATCH_SIZE)
+                {
+                    std::vector<Detection> validDetections;
+                    for (size_t d = detectionsBefore; d < detections.size(); ++d)
+                    {
+                        // Manter apenas detec\u00e7\u00f5es dos frames originais
+                        if (detections[d].frameNumber < miniStartFrame + originalSize)
+                        {
+                            validDetections.push_back(detections[d]);
+                        }
+                    }
+                    // Remover todas as deteccoes deste mini-batch e adicionar apenas as validas
+                    detections.erase(detections.begin() + detectionsBefore, detections.end());
+                    detections.insert(detections.end(), validDetections.begin(), validDetections.end());
+                }
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Erro ao processar batch: " << e.what() << std::endl;
+            break;
+        }
+
+        std::cout << "Total de deteccoes: " << detections.size() << std::endl;
+
+        // Filtrar deteccoes do objeto solicitado
+        std::vector<Detection> targetDetections = filter_detections_by_class(detections, targetClassId);
+        
+        std::cout << "Deteccoes de '" << classNames[targetClassId] << "': " << targetDetections.size() << std::endl;
+
+        // Salvar frames que contem o objeto
+        if (!targetDetections.empty())
+        {
+            // Extrair números de frames únicos
+            std::vector<int> uniqueFrames;
+            for (const auto &det : targetDetections)
+            {
+                if (std::find(uniqueFrames.begin(), uniqueFrames.end(), det.frameNumber) == uniqueFrames.end())
+                {
+                    uniqueFrames.push_back(det.frameNumber);
+                }
+            }
+
+            std::cout << "Salvando " << uniqueFrames.size() << " frames..." << std::endl;
+            
+            for (int frameNum : uniqueFrames)
+            {
+                int batchIndex = frameNum - startFrame;
+                if (batchIndex >= 0 && batchIndex < batch.size())
+                {
+                    // Filtrar detecções deste frame específico
+                    std::vector<Detection> frameDetections;
+                    for (const auto& det : targetDetections)
+                    {
+                        if (det.frameNumber == frameNum)
+                        {
+                            frameDetections.push_back(det);
+                        }
+                    }
+                    
+                    // Desenhar detecções no frame
+                    cv::Mat annotatedFrame = draw_detections(batch[batchIndex], frameDetections, classNames);
+                    
+                    // Salvar frame anotado
+                    save_frame_as_jpeg(annotatedFrame, frameNum, outputDirPath);
+                    std::cout << "  Frame " << frameNum << ": " << frameDetections.size() << " detecção(ões)" << std::endl;
+                }
+            }
+        }
+
+        // Perguntar se deseja continuar
+        if (currentFrame < totalFrames)
+        {
+            std::cout << "\nDeseja continuar processando? (s/n): ";
+            std::string response;
+            std::getline(std::cin, response);
+
+            if (response != "s" && response != "S" && response != "sim" && response != "Sim")
+            {
+                std::cout << "Processamento interrompido pelo usuario." << std::endl;
+                break;
+            }
+        }
+        else
+        {
+            std::cout << "\nTodos os frames foram processados!" << std::endl;
+        }
+    }
+
+    cap.release();
+    std::cout << "\nProcessamento concluido. Frames salvos em: " << outputDirPath << "/" << std::endl;
 
     return 0;
 }

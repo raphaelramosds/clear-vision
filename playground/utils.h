@@ -1,4 +1,14 @@
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 struct Detection
 {
@@ -7,6 +17,163 @@ struct Detection
     float x, y, w, h;
     float confidence;
 };
+
+// Criar diretório com timestamp e nome do objeto
+inline std::string create_output_directory(const std::string& baseDir, const std::string& objectName)
+{
+    // Obter timestamp atual
+    auto now = std::chrono::system_clock::now();
+    auto time_t_now = std::chrono::system_clock::to_time_t(now);
+    std::tm* tm_now = std::localtime(&time_t_now);
+    
+    // Formatar: YYYYMMDD-HHMMSS-objectname
+    std::ostringstream oss;
+    oss << baseDir << "/"
+        << std::setfill('0') 
+        << std::setw(4) << (tm_now->tm_year + 1900)
+        << std::setw(2) << (tm_now->tm_mon + 1)
+        << std::setw(2) << tm_now->tm_mday
+        << "-"
+        << std::setw(2) << tm_now->tm_hour
+        << std::setw(2) << tm_now->tm_min
+        << std::setw(2) << tm_now->tm_sec
+        << "-" << objectName;
+    
+    std::string dirPath = oss.str();
+    
+    // Criar diretório base se não existir
+    mkdir(baseDir.c_str(), 0755);
+    
+    // Criar diretório com timestamp
+    int result = mkdir(dirPath.c_str(), 0755);
+    
+    if (result != 0 && errno != EEXIST)
+    {
+        throw std::runtime_error("Não foi possível criar diretório: " + dirPath);
+    }
+    
+    std::cout << "Diretório de saída criado: " << dirPath << std::endl;
+    
+    return dirPath;
+}
+
+// Carregar nomes das classes COCO de um arquivo
+inline std::vector<std::string> load_class_names(const char* filepath)
+{
+    std::vector<std::string> classNames;
+    std::ifstream file(filepath);
+    
+    if (!file.is_open())
+    {
+        throw std::runtime_error(std::string("Cannot open class names file: ") + filepath);
+    }
+    
+    std::string line;
+    while (std::getline(file, line))
+    {
+        if (!line.empty())
+        {
+            classNames.push_back(line);
+        }
+    }
+    
+    file.close();
+    return classNames;
+}
+
+// Busca simples por substring (case insensitive)
+inline int find_class_id(const std::string& query, const std::vector<std::string>& classNames)
+{
+    std::string queryLower = query;
+    std::transform(queryLower.begin(), queryLower.end(), queryLower.begin(), ::tolower);
+    
+    for (size_t i = 0; i < classNames.size(); ++i)
+    {
+        std::string className = classNames[i];
+        std::transform(className.begin(), className.end(), className.begin(), ::tolower);
+        
+        if (className.find(queryLower) != std::string::npos)
+        {
+            return static_cast<int>(i);
+        }
+    }
+    
+    return -1; // Não encontrado
+}
+
+// Filtrar detecções por classId
+inline std::vector<Detection> filter_detections_by_class(const std::vector<Detection>& detections, int classId)
+{
+    std::vector<Detection> filtered;
+    
+    for (const auto& det : detections)
+    {
+        if (det.classId == classId)
+        {
+            filtered.push_back(det);
+        }
+    }
+    
+    return filtered;
+}
+
+// Desenhar detecções no frame
+inline cv::Mat draw_detections(const cv::Mat& frame, const std::vector<Detection>& detections, 
+                               const std::vector<std::string>& classNames)
+{
+    cv::Mat annotatedFrame = frame.clone();
+    
+    for (const auto& det : detections)
+    {
+        // Desenhar retângulo da bounding box
+        cv::Rect bbox(static_cast<int>(det.x), static_cast<int>(det.y), 
+                      static_cast<int>(det.w), static_cast<int>(det.h));
+        cv::rectangle(annotatedFrame, bbox, cv::Scalar(0, 255, 0), 2);
+        
+        // Preparar texto com classe e confiança
+        std::string label = classNames[det.classId] + ": " + 
+                           std::to_string(static_cast<int>(det.confidence * 100)) + "%";
+        
+        // Calcular tamanho do texto para desenhar fundo
+        int baseline = 0;
+        cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.6, 2, &baseline);
+        
+        // Desenhar fundo do texto
+        cv::Point textOrg(det.x, det.y - 5);
+        if (textOrg.y - textSize.height < 0)
+        {
+            textOrg.y = det.y + textSize.height + 5;
+        }
+        
+        cv::rectangle(annotatedFrame, 
+                     cv::Point(textOrg.x, textOrg.y - textSize.height - baseline),
+                     cv::Point(textOrg.x + textSize.width, textOrg.y + baseline),
+                     cv::Scalar(0, 255, 0), cv::FILLED);
+        
+        // Desenhar texto
+        cv::putText(annotatedFrame, label, textOrg, cv::FONT_HERSHEY_SIMPLEX, 
+                   0.6, cv::Scalar(0, 0, 0), 2);
+    }
+    
+    return annotatedFrame;
+}
+
+// Salvar frame como JPEG
+inline void save_frame_as_jpeg(const cv::Mat& frame, int frameNumber, const std::string& outputDir = "output")
+{
+    std::string filename = outputDir + "/frame_" + std::to_string(frameNumber) + ".jpg";
+    
+    std::vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(95);
+    
+    bool success = cv::imwrite(filename, frame, compression_params);
+    
+    if (!success)
+    {
+        std::cerr << "Erro ao salvar frame " << frameNumber << std::endl;
+    }
+}
 
 template <typename Func, typename... Args>
 static void TIMEIT(std::string label, Func func, Args &&...args)
@@ -110,8 +277,8 @@ inline void processBatch(std::vector<cv::Mat> &batch, cv::dnn::Net &net, int sta
     int numAttributes = output.size[1];  // 84 (cx, cy, w, h + 80 classes)
     int numPredictions = output.size[2]; // 8400
 
-    std::cout << "Batch processado. Formato da saída: "
-              << batchSize << "x" << numAttributes << "x" << numPredictions << std::endl;
+    // std::cout << "Batch processado. Formato da saída: "
+    //           << batchSize << "x" << numAttributes << "x" << numPredictions << std::endl;
 
     for (int b = 0; b < batchSize; ++b)
     {
