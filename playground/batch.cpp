@@ -4,9 +4,17 @@
 #include <opencv2/opencv.hpp>
 #include "utils.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-    const char *videoPath = "video_rua01.mp4";
+    // Verificar se o caminho do vídeo foi fornecido
+    if (argc < 2)
+    {
+        std::cerr << "Uso: " << argv[0] << " <caminho_do_video>" << std::endl;
+        std::cerr << "Exemplo: " << argv[0] << " video_rua01.mp4" << std::endl;
+        return 1;
+    }
+
+    const char *videoPath = argv[1];
     const char *onnxPath = "yolov8n.onnx";
     const char *classNamesPath = "../core/coco.names";
     const char *outputDir = "output";
@@ -201,25 +209,35 @@ int main()
                     
                     // Salvar frame anotado
                     save_frame_as_jpeg(annotatedFrame, frameNum, outputDirPath);
-                    std::cout << "  Frame " << frameNum << ": " << frameDetections.size() << " detecção(ões)" << std::endl;
+                    // std::cout << "  Frame " << frameNum << ": " << frameDetections.size() << " detecção(ões)" << std::endl;
+                }
+            }
+            
+            // Perguntar se deseja continuar apenas quando há detecções
+            if (currentFrame < totalFrames)
+            {
+                std::cout << "\nDeseja continuar processando? (s/n): ";
+                std::string response;
+                std::getline(std::cin, response);
+
+                if (response != "s" && response != "S" && response != "sim" && response != "Sim")
+                {
+                    std::cout << "Processamento interrompido pelo usuario." << std::endl;
+                    break;
                 }
             }
         }
-
-        // Perguntar se deseja continuar
-        if (currentFrame < totalFrames)
+        else
         {
-            std::cout << "\nDeseja continuar processando? (s/n): ";
-            std::string response;
-            std::getline(std::cin, response);
-
-            if (response != "s" && response != "S" && response != "sim" && response != "Sim")
+            // Sem detecções: prosseguir automaticamente
+            if (currentFrame < totalFrames)
             {
-                std::cout << "Processamento interrompido pelo usuario." << std::endl;
-                break;
+                std::cout << "Nenhuma detecção neste batch. Prosseguindo automaticamente...\n" << std::endl;
             }
         }
-        else
+
+        // Verificar se todos os frames foram processados
+        if (currentFrame >= totalFrames)
         {
             std::cout << "\nTodos os frames foram processados!" << std::endl;
         }

@@ -81,7 +81,9 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/playground/batch",
-            "args": [],
+            "args": [
+                "${workspaceFolder}/playground/video_rua01.mp4"
+            ],
             "cwd": "${workspaceFolder}/playground",
             "preLaunchTask": "build-playground",
             "miDebuggerPath": "/usr/bin/gdb",
