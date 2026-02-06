@@ -1,3 +1,5 @@
 batch
 conf_parser
+test
 output/**/*.jpg
+*.o

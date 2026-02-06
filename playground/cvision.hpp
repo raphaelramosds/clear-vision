@@ -6,5 +6,5 @@ namespace cvision
 {
     void bootstrap(const std::string conf_path);
 
-        
+    
 }

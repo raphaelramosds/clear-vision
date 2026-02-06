@@ -33,3 +33,4 @@ void cvision::bootstrap(const std::string conf_path)
 
     std::cout << "Inicializacao concluida com sucesso\n";
 }
+
