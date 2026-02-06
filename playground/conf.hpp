@@ -23,4 +23,115 @@ struct Config
     const char *output_dir;
 };
 
-void parse_conf(Config& config);
+inline void split_property(const std::string &line, std::string &key, std::string &value)
+{
+    char str = '=';
+    std::string token;
+    std::istringstream token_stream(line);
+
+    // Fill key
+    std::getline(token_stream, token, '=');
+    key = token;
+
+    // Fill value
+    std::getline(token_stream, token);
+    value = token;
+}
+
+inline void parse_conf(Config &config, const std::string& conf_path = "cvision.conf")
+{
+    std::cout << "Lendo arquivo de configuracao\n";
+
+    std::ifstream fin;
+    fin.open(conf_path);
+
+    if (!fin.is_open())
+    {
+        std::cerr << "Nao foi possivel abrir o arquivo de configuracao\n";
+        exit(1);
+    }
+
+    std::string line, key, value;
+
+    while (std::getline(fin, line))
+    {
+        std::stringstream iss(line);
+        if (!(iss >> line))
+            continue; // Skip empty lines
+
+        if (line == "[batch]")
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                std::getline(fin, line);
+                split_property(line, key, value);
+                if (key == "size")
+                {
+                    config.batch_size = std::stoi(value);
+                }
+                else if (key == "mini_size")
+                {
+                    config.batch_mini_size = std::stoi(value);
+                }
+                else {
+                    std::cerr << "Propriedade desconhecida: " << key << std::endl;
+                }
+            }
+       }
+
+       else if (line == "[net]")
+       {
+            for (int i = 0; i < 5; i++)
+            {
+                std::getline(fin, line);
+                split_property(line, key, value);
+                if (key == "onnx_path")
+                {
+                    config.onnx_path = strdup(value.c_str());
+                }
+                else if (key == "input_width")
+                {
+                    config.input_width = std::stoi(value);
+                }
+                else if (key == "input_height")
+                {
+                    config.input_height = std::stoi(value);
+                }
+                else if (key == "nms_thr")
+                {
+                    config.nms_thr = std::stof(value);
+                }
+                else if (key == "thr")
+                {
+                    config.thr = std::stof(value);
+                }
+                else {
+                    std::cerr << "Propriedade desconhecida: " << key << std::endl;
+                }
+            }
+       }
+
+       else if (line == "[app]")
+       {
+            for (int i = 0; i < 1; i++)
+            {
+                std::getline(fin, line);
+                split_property(line, key, value);
+                if (key == "output_dir")
+                {
+                    config.output_dir = strdup(value.c_str());
+                }
+                else {
+                    std::cerr << "Propriedade desconhecida: " << key << std::endl;
+                }
+            }
+       }
+
+       else
+       {
+           std::cerr << "Secao desconhecida: " << line << std::endl;
+       }
+    }
+
+    std::cout << "Arquivo de configuracao aberto com sucesso\n";
+}
