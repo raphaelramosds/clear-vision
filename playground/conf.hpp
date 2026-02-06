@@ -15,6 +15,7 @@ struct Config
     uint8_t batch_mini_size;
     // Net
     const char *onnx_path;
+    const char *classnames_path;
     uint16_t input_width;
     uint16_t input_height;
     float nms_thr;
@@ -23,7 +24,7 @@ struct Config
     const char *output_dir;
 };
 
-inline void split_property(const std::string &line, std::string &key, std::string &value)
+void split_property(const std::string &line, std::string &key, std::string &value)
 {
     char str = '=';
     std::string token;
@@ -81,13 +82,17 @@ inline void parse_conf(Config &config, const std::string& conf_path = "cvision.c
 
        else if (line == "[net]")
        {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 std::getline(fin, line);
                 split_property(line, key, value);
                 if (key == "onnx_path")
                 {
                     config.onnx_path = strdup(value.c_str());
+                }
+                else if (key == "classnames_path")
+                {
+                    config.classnames_path = strdup(value.c_str());
                 }
                 else if (key == "input_width")
                 {
@@ -134,4 +139,14 @@ inline void parse_conf(Config &config, const std::string& conf_path = "cvision.c
     }
 
     std::cout << "Arquivo de configuracao aberto com sucesso\n";
+    std::cout << "Propriedades lidas:\n";
+    std::cout << "  Batch size: " << config.batch_size << "\n";
+    std::cout << "  Batch mini size: " << static_cast<int>(config.batch_mini_size) << "\n";
+    std::cout << "  ONNX path: " << config.onnx_path << "\n";
+    std::cout << "  Classnames path: " << config.classnames_path << "\n";
+    std::cout << "  Input width: " << config.input_width << "\n";
+    std::cout << "  Input height: " << config.input_height << "\n";
+    std::cout << "  NMS threshold: " << config.nms_thr << "\n";
+    std::cout << "  Confidence threshold: " << config.thr << "\n";
+    std::cout << "  Output directory: " << config.output_dir << "\n";
 }
