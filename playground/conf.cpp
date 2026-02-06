@@ -1,25 +1,4 @@
-#include <iostream>
-#include <cstdint>
-#include <cstdlib>
-#include <fstream>
-#include <sstream>
-#include <string.h>
-#include <vector>
-
-struct Config
-{
-    // Batch
-    uint16_t batch_size;
-    uint8_t batch_mini_size;
-    // Net
-    const char *onnx_path;
-    uint16_t input_width;
-    uint16_t input_height;
-    float nms_thr;
-    float thr;
-    // App
-    const char *output_dir;
-};
+#include "conf.hpp"
 
 void split_property(const std::string &line, std::string &key, std::string &value)
 {
@@ -134,20 +113,20 @@ void parse_conf(Config &config)
     std::cout << "Arquivo de configuracao aberto com sucesso\n";
 }
 
-int main()
-{
-    Config c;
-    parse_conf(c);
+// int main()
+// {
+//     Config c;
+//     parse_conf(c);
 
-    // Check parsed values
-    std::cout << "Batch size: " << c.batch_size << std::endl;
-    std::cout << "Batch mini size: " << (int)c.batch_mini_size << std::endl;
-    std::cout << "ONNX path: " << c.onnx_path << std::endl;
-    std::cout << "Input width: " << c.input_width << std::endl;
-    std::cout << "Input height: " << c.input_height << std::endl;
-    std::cout << "NMS threshold: " << c.nms_thr << std::endl;
-    std::cout << "Threshold: " << c.thr << std::endl;
-    std::cout << "Output directory: " << c.output_dir << std::endl;
+//     // Check parsed values
+//     std::cout << "Batch size: " << c.batch_size << std::endl;
+//     std::cout << "Batch mini size: " << (int)c.batch_mini_size << std::endl;
+//     std::cout << "ONNX path: " << c.onnx_path << std::endl;
+//     std::cout << "Input width: " << c.input_width << std::endl;
+//     std::cout << "Input height: " << c.input_height << std::endl;
+//     std::cout << "NMS threshold: " << c.nms_thr << std::endl;
+//     std::cout << "Threshold: " << c.thr << std::endl;
+//     std::cout << "Output directory: " << c.output_dir << std::endl;
 
-    return 0;
-}
+//     return 0;
+// }
