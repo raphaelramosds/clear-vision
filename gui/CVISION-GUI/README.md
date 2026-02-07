@@ -41,4 +41,4 @@ On Projects, set the following environment variables on Qt project, with **Batch
 -DQt6Widgets_DIR:PATH=C:/msys64/mingw64/lib/cmake/Qt6Widgets
 -DQt6_DIR:PATH=C:/msys64/mingw64/lib/cmake/Qt6
 -DWINDEPLOYQT_EXECUTABLE:FILEPATH=C:/msys64/mingw64/bin/windeployqt.exe
-``
+```
