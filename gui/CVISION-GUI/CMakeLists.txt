@@ -12,6 +12,8 @@ set(OpenCV_DIR "C:/msys64/mingw64/lib/cmake/opencv4")
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Multimedia)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS MultimediaWidgets)
 find_package(OpenCV REQUIRED)
 
 set(PROJECT_SOURCES
@@ -26,6 +28,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         .gitignore
+        README.md
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET CVISION-GUI APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -45,8 +48,12 @@ else()
     endif()
 endif()
 
-target_link_libraries(CVISION-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(CVISION-GUI PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${OpenCV_LIBS})
+target_link_libraries(CVISION-GUI PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::MultimediaWidgets
+    ${OpenCV_LIBS}
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

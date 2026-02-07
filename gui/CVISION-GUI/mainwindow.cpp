@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    // ui->stopBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 }
 
 MainWindow::~MainWindow()
@@ -37,5 +40,31 @@ void MainWindow::on_loadVideoBtn_clicked()
         qDebug() << "Dimensoes do frame: " << width << " x " << height;
         cap.release();
     }
+}
+
+
+void MainWindow::on_durationHorizontalSlider_valueChanged(int value)
+{
+
+}
+
+
+void MainWindow::on_stopBtn_clicked()
+{
+    // Player->stop();
+}
+
+
+void MainWindow::on_playPauseBtn_clicked()
+{
+    // if (IS_PAUSED == true) {
+    //     IS_PAUSED = false;
+    //     ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    //     Player->play();
+    // } else {
+    //     IS_PAUSED = false;
+    //     ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    //     Player->pause();
+    // }
 }
 

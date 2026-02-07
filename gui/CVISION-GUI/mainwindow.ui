@@ -14,31 +14,115 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QGroupBox" name="videoGroupBox">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>60</y>
+      <y>130</y>
       <width>691</width>
-      <height>31</height>
+      <height>331</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="loadVideoLabel">
-       <property name="text">
-        <string>Nenhum video carregado</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="loadVideoBtn">
-       <property name="text">
-        <string>Carregar video</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox
+{
+	border: 1px solid;
+}</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="currentTimeLabel">
+    <property name="geometry">
+     <rect>
+      <x>72</x>
+      <y>481</y>
+      <width>54</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>00:00:00</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="durationHorizontalSlider">
+    <property name="geometry">
+     <rect>
+      <x>133</x>
+      <y>481</y>
+      <width>561</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Orientation::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="totalTimeLabel">
+    <property name="geometry">
+     <rect>
+      <x>707</x>
+      <y>481</y>
+      <width>54</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>00:00:00</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="playPauseBtn">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>520</y>
+      <width>93</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="stopBtn">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>520</y>
+      <width>93</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="loadVideoBtn">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>60</y>
+      <width>107</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Carregar video</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="loadVideoLabel">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>70</y>
+      <width>169</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Nenhum video carregado</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
