@@ -2,11 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-// #include <QtMultimedia>
-// #include <QtMultimediaWidgets>
-// #include <QtCore>
-// #include <QtWidgets>
-// #include <QtGui>
+#include <QtMultimedia>
+#include <QtMultimediaWidgets>
+#include <QtCore>
+#include <QtWidgets>
+#include <QtGui>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -34,9 +34,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    // QMediaPlayer *Player;
+    QMediaPlayer *Player;
 
-    // QVideoWidget *Video;
+    QVideoWidget *Video;
 
     qint64 mDuration;
 

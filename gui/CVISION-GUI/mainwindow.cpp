@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-    // ui->stopBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    Player = new QMediaPlayer();
+
+    ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    ui->stopBtn->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
 }
 
 MainWindow::~MainWindow()
@@ -40,6 +42,14 @@ void MainWindow::on_loadVideoBtn_clicked()
         qDebug() << "Dimensoes do frame: " << width << " x " << height;
         cap.release();
     }
+
+    Video = new QVideoWidget();
+    Video->setGeometry(5, 5, ui->videoGroupBox->width(), ui->videoGroupBox->height());
+    Video->setParent(ui->videoGroupBox);
+    Player->setVideoOutput(Video);
+    Player->setSource(QUrl(fileName));
+    Video->setVisible(true);
+    Video->show();
 }
 
 
@@ -51,20 +61,20 @@ void MainWindow::on_durationHorizontalSlider_valueChanged(int value)
 
 void MainWindow::on_stopBtn_clicked()
 {
-    // Player->stop();
+    Player->stop();
 }
 
 
 void MainWindow::on_playPauseBtn_clicked()
 {
-    // if (IS_PAUSED == true) {
-    //     IS_PAUSED = false;
-    //     ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
-    //     Player->play();
-    // } else {
-    //     IS_PAUSED = false;
-    //     ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-    //     Player->pause();
-    // }
+    if (IS_PAUSED == true) {
+        IS_PAUSED = false;
+        Player->play();
+        ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    } else {
+        IS_PAUSED = true;
+        ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+        Player->pause();
+    }
 }
 
