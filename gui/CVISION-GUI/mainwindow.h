@@ -23,6 +23,10 @@ public:
     ~MainWindow();
 
 private slots:
+    void durationChanged(qint64 duration);
+
+    void positionChanged(qint64 duration);
+
     void on_loadVideoBtn_clicked();
 
     void on_durationHorizontalSlider_valueChanged(int value);
@@ -40,7 +44,9 @@ private:
 
     qint64 mDuration;
 
-    bool IS_PAUSED = false;
+    bool IS_PAUSED = true;
+
+    void updateDuration(qint64 duration);
 
 };
 #endif // MAINWINDOW_H

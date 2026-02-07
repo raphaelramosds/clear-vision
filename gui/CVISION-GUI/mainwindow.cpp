@@ -17,6 +17,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->playPauseBtn->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     ui->stopBtn->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
+
+    connect(Player, &QMediaPlayer::durationChanged, this, &MainWindow::durationChanged);
+    connect(Player, &QMediaPlayer::positionChanged, this, &MainWindow::positionChanged);
 }
 
 MainWindow::~MainWindow()
@@ -55,7 +58,7 @@ void MainWindow::on_loadVideoBtn_clicked()
 
 void MainWindow::on_durationHorizontalSlider_valueChanged(int value)
 {
-
+    Player->setPosition(value*1000);
 }
 
 
@@ -78,3 +81,30 @@ void MainWindow::on_playPauseBtn_clicked()
     }
 }
 
+void MainWindow::updateDuration(qint64 duration)
+{
+    if (duration || mDuration) {
+        QTime currentTime((duration / 3600) % 60, (duration / 60) % 60,
+                          duration % 60, (duration * 1000) % 1000);
+        QTime totalTime((mDuration / 3600) % 60, (mDuration / 60) % 60,
+                        mDuration % 60, (mDuration * 1000) % 1000);
+        QString format = "mm:ss";
+        ui->currentTimeLabel->setText(currentTime.toString(format));
+        ui->totalTimeLabel->setText(totalTime.toString(format));
+    }
+}
+
+void MainWindow::positionChanged(qint64 duration)
+{
+    if (!ui->durationHorizontalSlider->isSliderDown())
+    {
+        ui->durationHorizontalSlider->setValue(duration / 1000);
+    }
+    this->updateDuration(duration / 1000);
+}
+
+void MainWindow::durationChanged(qint64 duration)
+{
+    mDuration = duration / 1000;
+    ui->durationHorizontalSlider->setMaximum(mDuration);
+}
